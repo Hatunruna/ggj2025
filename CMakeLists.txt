@@ -8,13 +8,29 @@ project(${GAME}
 
 include(GNUInstallDirs)
 
-find_package(gf REQUIRED COMPONENTS graphics)
+set(BUILD_TESTING OFF CACHE BOOL "Enable GF tests" FORCE)
+set(GF_BUILD_EXAMPLES OFF CACHE BOOL "Enable GF examples" FORCE)
+set(GF_BUILD_DOCUMENTATION OFF CACHE BOOL "Enable GF documentation" FORCE)
+add_subdirectory(engine EXCLUDE_FROM_ALL)
+set_target_properties(gfcore0 PROPERTIES UNITY_BUILD ON)
+set_target_properties(gf0 PROPERTIES UNITY_BUILD ON)
+set_target_properties(gfnet0 PROPERTIES UNITY_BUILD ON)
+
+if (WIN32)
+  target_compile_options(gfcore0 PRIVATE /wd4251)
+  target_compile_options(gf0 PRIVATE /wd4251)
+  target_compile_options(gfnet0 PRIVATE /wd4251)
+endif ()
 
 if (UNIX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 endif ()
 
-set(GAME_DATADIR "${CMAKE_INSTALL_PREFIX}/share/games/${GAME}")
+if (WIN32)
+  set(GAME_DATADIR "./data" CACHE STRING "Path to game data")
+else ()
+  set(GAME_DATADIR "${CMAKE_INSTALL_PREFIX}/share/games/${GAME}" CACHE STRING "Path to game data")
+endif()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/code/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
 
 add_executable(${GAME}
@@ -26,6 +42,10 @@ add_executable(${GAME}
   code/bits/TitleEntity.cc
 )
 
+if (WIN32)
+  target_compile_options(${GAME} PRIVATE /wd4251)
+endif ()
+
 target_include_directories(${GAME}
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/code
@@ -34,15 +54,49 @@ target_include_directories(${GAME}
 
 target_link_libraries(${GAME}
   PRIVATE
-    gf::graphics
+    gf0
 )
 
-install(
-  TARGETS ${GAME}
-  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-)
+if (WIN32)
+  install(
+    FILES
+      $<TARGET_FILE:gfcore0>
+      $<TARGET_FILE:gf0>
+    DESTINATION .
+  )
 
-install(
-  DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/${GAME}"
-  DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/games"
-)
+  install(
+    DIRECTORY ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/bin/
+    DESTINATION .
+    CONFIGURATIONS Release
+    PATTERN "*.pdb" EXCLUDE
+  )
+
+  install(
+    DIRECTORY ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/debug/bin/
+    DESTINATION .
+    CONFIGURATIONS Debug
+    PATTERN "*.pdb" EXCLUDE
+  )
+
+  install(TARGETS ${GAME} DESTINATION . COMPONENT G)
+else ()
+  install(TARGETS ${GAME} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+endif ()
+
+if (WIN32)
+  install(
+    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/${GAME}/"
+    DESTINATION "./data/"
+  )
+else ()
+  install(
+    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/${GAME}"
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/games"
+  )
+endif ()
+
+if (WIN32)
+  set(CPACK_GENERATOR "ZIP")
+  include(CPack)
+endif()
