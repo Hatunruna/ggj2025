@@ -1,0 +1,172 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  BUILD_TYPE: Release
+  VCPKG_COMMIT: c8696863d371ab7f46e213d8f5ca923c4aef2a00
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    env:
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}\vcpkg\binary-cache
+
+    steps:
+      # Compile vcpkg
+      - name: vcpkg cache
+        id: cache-vcpkg
+        uses: actions/cache@v3
+        with:
+          path: vcpkg
+          key: ${{ runner.os }}-vcpkg-${{ env.VCPKG_COMMIT }}
+
+      - uses: actions/checkout@v3
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        with:
+          repository: Microsoft/vcpkg
+          path: vcpkg
+          ref: ${{ env.VCPKG_COMMIT }}
+
+      - name: Install vcpkg dependencies
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        working-directory: ${{github.workspace}}/vcpkg
+        run: |
+          mkdir $Env:VCPKG_DEFAULT_BINARY_CACHE
+          .\bootstrap-vcpkg.bat
+          .\vcpkg.exe install sfml:x64-windows boost-algorithm:x64-windows boost-container:x64-windows boost-filesystem:x64-windows boost-heap:x64-windows freetype:x64-windows pugixml:x64-windows sdl2:x64-windows stb:x64-windows zlib:x64-windows
+
+      # Compile GF
+      - uses: actions/checkout@v3
+        with:
+          repository: GamedevFramework/gf
+          submodules: recursive
+          path: gf
+
+      - name: Extract gf revision
+        shell: bash
+        working-directory: ${{github.workspace}}/gf
+        run: echo "revision=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        id: extract-gf-revision
+
+      - name: gf cache
+        id: cache-gf
+        uses: actions/cache@v3
+        with:
+          path: gf
+          key: ${{ runner.os }}-gf-${{ steps.extract-gf-revision.outputs.revision }}
+
+      - name: Configure gf
+        if: steps.cache-gf.outputs.cache-hit != 'true'
+        run: cmake -DGF_USE_EMBEDDED_LIBS=OFF -DGF_BUILD_GAMES=OFF -DGF_BUILD_EXAMPLES=OFF -DGF_BUILD_DOCUMENTATION=OFF -DGF_DEBUG=OFF -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/gf/install -DCMAKE_UNITY_BUILD=ON -S ${{ github.workspace }}/gf -B ${{ github.workspace }}/gf/build
+
+      - name: Build gf
+        if: steps.cache-gf.outputs.cache-hit != 'true'
+        run: cmake --build ${{ github.workspace }}/gf/build --config ${{ env.BUILD_TYPE }} --parallel
+
+      - name: Install gf
+        if: steps.cache-gf.outputs.cache-hit != 'true'
+        run: cmake --install ${{ github.workspace }}/gf/build --config ${{ env.BUILD_TYPE }}
+
+      # Build the game
+      - uses: actions/checkout@v3
+        with:
+          path: ggj2024
+          submodules: 'true'
+
+      - name: Configure game
+        run: cmake -DCMAKE_UNITY_BUILD=ON -DCMAKE_PREFIX_PATH=${{ github.workspace }}/gf/install -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake -T host=x64 -A x64 -S ${{github.workspace}}/ggj2024/ -B ${{github.workspace}}/ggj2024/build
+
+      - name: Build game
+        run: cmake --build ${{github.workspace}}/ggj2024/build --config ${{env.BUILD_TYPE}} --parallel
+
+      - name: Copy dll
+        run: |
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\SDL2.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\brotlicommon.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\brotlidec.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\bz2.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\freetype.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\gf\install\bin\gf0.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\gf\install\bin\gfcore0.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\libpng16.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\pugixml.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\zlib1.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\FLAC.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\ogg.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\OpenAL32.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\sfml-audio-2.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\sfml-system-2.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\vorbis.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\vorbisenc.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+          cp ${{github.workspace}}\vcpkg\installed\x64-windows\bin\vorbisfile.dll ${{github.workspace}}/ggj2024/build/${{env.BUILD_TYPE}}
+
+      - name: Create game
+        working-directory: ${{github.workspace}}/ggj2024/build
+        run: cpack --config CPackConfig.cmake -C ${{env.BUILD_TYPE}}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ggj2024-snapshot
+          path: ${{github.workspace}}/ggj2024/build/*.zip
+          if-no-files-found: error
+
+
+  build-linux:
+    runs-on: ubuntu-22.04
+
+    steps:
+      # Dependencies
+      - name: Install dependency
+        run: |
+          sudo apt update
+          sudo apt install -y libsdl2-dev libboost-dev libfreetype6-dev zlib1g-dev libpugixml-dev libsfml-dev
+
+      # Compile GF
+      - uses: actions/checkout@v3
+        with:
+          repository: GamedevFramework/gf
+          submodules: recursive
+          path: gf
+
+      - name: Extract gf revision
+        shell: bash
+        working-directory: ${{github.workspace}}/gf
+        run: echo "revision=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        id: extract-gf-revision
+
+      - name: gf cache
+        id: cache-gf
+        uses: actions/cache@v3
+        with:
+          path: gf
+          key: ${{ runner.os }}-gf-${{ steps.extract-gf-revision.outputs.revision }}
+
+      - name: Configure gf
+        if: steps.cache-gf.outputs.cache-hit != 'true'
+        run: cmake -DGF_BUILD_GAMES=OFF -DGF_BUILD_EXAMPLES=OFF -DGF_BUILD_DOCUMENTATION=OFF -DGF_DEBUG=OFF -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/gf/install -DCMAKE_UNITY_BUILD=ON -S ${{ github.workspace }}/gf -B ${{ github.workspace }}/gf/build
+
+      - name: Build gf
+        if: steps.cache-gf.outputs.cache-hit != 'true'
+        run: cmake --build ${{ github.workspace }}/gf/build --config ${{ env.BUILD_TYPE }} --parallel
+
+      - name: Install gf
+        if: steps.cache-gf.outputs.cache-hit != 'true'
+        run: cmake --install ${{ github.workspace }}/gf/build --config ${{ env.BUILD_TYPE }}
+
+      # Build the game
+      - uses: actions/checkout@v3
+        with:
+          path: ggj2024
+          submodules: 'true'
+
+      - name: Configure ggj2024
+        run: cmake -S ${{github.workspace}}/ggj2024/ -B ${{github.workspace}}/ggj2024/build -DCMAKE_UNITY_BUILD=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PREFIX_PATH=${{github.workspace}}/gf/install
+
+      - name: Build ggj2024
+        run: cmake --build ${{github.workspace}}/ggj2024/build --config ${{env.BUILD_TYPE}} --parallel
