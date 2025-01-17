@@ -1,0 +1,11 @@
+{
+  "dependencies": [
+    "boost-algorithm",
+    "boost-container",
+    "boost-heap",
+    "freetype",
+    "pugixml",
+    "sdl2",
+    "zlib"
+  ]
+}
