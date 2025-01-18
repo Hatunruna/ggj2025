@@ -5,7 +5,7 @@
 namespace xy {
 
   GameHub::GameHub()
-  : GameManager("Game", { GAME_DATADIR })
+  : GameManager("Game", { xy::GameDataDirectory })
   , start(*this)
   {
     pushScene(start);

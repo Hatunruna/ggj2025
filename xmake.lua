@@ -6,6 +6,7 @@ add_repositories("gf-repo https://github.com/GamedevFramework/xmake-repo")
 add_requires("gamedevframework1")
 
 add_rules("mode.debug", "mode.releasedbg", "mode.release")
+add_rules("plugin.compile_commands.autoupdate", {outputdir = "$(buildir)"})
 
 set_policy("build.warning", true)
 set_warnings("allextra")
