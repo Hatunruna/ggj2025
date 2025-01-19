@@ -1,5 +1,5 @@
 #include "GameData.h"
 
-namespace xy {
+namespace be {
 
 }

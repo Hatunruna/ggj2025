@@ -2,10 +2,10 @@
 
 #include "config.h"
 
-namespace xy {
+namespace be {
 
   GameHub::GameHub()
-  : GameManager("Game", { xy::GameDataDirectory })
+  : GameManager("Bubble Express", { be::GameDataDirectory })
   , start(*this)
   {
     pushScene(start);

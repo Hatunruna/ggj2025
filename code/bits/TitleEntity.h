@@ -1,11 +1,11 @@
-#ifndef XY_TITLE_ENTITY_H
-#define XY_TITLE_ENTITY_H
+#ifndef be_TITLE_ENTITY_H
+#define be_TITLE_ENTITY_H
 
 #include <gf/Entity.h>
 #include <gf/Font.h>
 #include <gf/ResourceManager.h>
 
-namespace xy {
+namespace be {
 
   class TitleEntity : public gf::Entity {
   public:
@@ -21,4 +21,4 @@ namespace xy {
 }
 
 
-#endif // XY_TITLE_ENTITY_H
+#endif // be_TITLE_ENTITY_H

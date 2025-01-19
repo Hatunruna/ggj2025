@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(GAME Game)
+set(GAME bubble-express)
 
 project(${GAME}
   VERSION 0.1.0

@@ -1,12 +1,12 @@
-#ifndef XY_START_SCENE_H
-#define XY_START_SCENE_H
+#ifndef be_START_SCENE_H
+#define be_START_SCENE_H
 
 #include <gf/Scene.h>
 #include <gf/Action.h>
 
 #include "TitleEntity.h"
 
-namespace xy {
+namespace be {
 
   struct GameHub;
 
@@ -28,4 +28,4 @@ namespace xy {
 
 }
 
-#endif // XY_START_SCENE_H
+#endif // be_START_SCENE_H

@@ -1,11 +1,11 @@
-#ifndef XY_GAME_STATE_H
-#define XY_GAME_STATE_H
+#ifndef be_GAME_STATE_H
+#define be_GAME_STATE_H
 
 #include <cstdint>
 
 #include <gf/Path.h>
 
-namespace xy {
+namespace be {
 
   struct GameState {
     static constexpr uint16_t Version = 1;
@@ -22,4 +22,4 @@ namespace xy {
 }
 
 
-#endif // XY_GAME_STATE_H
+#endif // be_GAME_STATE_H

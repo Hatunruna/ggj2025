@@ -6,7 +6,7 @@
 #include <gf/Sprite.h>
 #include <gf/Text.h>
 
-namespace xy {
+namespace be {
 
   TitleEntity::TitleEntity(gf::ResourceManager& resources)
   : m_font(resources.getFont("GoudyBookletter1911.otf"))
