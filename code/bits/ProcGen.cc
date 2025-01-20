@@ -1,5 +1,6 @@
 #include "ProcGen.h"
 
+#include "HeroState.h"
 #include "MapSettings.h"
 #include "MapState.h"
 
@@ -63,7 +64,7 @@ namespace be {
     }
 
 
-    gf::Array2D<MapCell, int32_t> transformRawMap(const gf::Array2D<RawCell>& raw)
+    gf::Array2D<MapCell, int32_t> transformRawMap(const gf::Array2D<RawCell>& raw, gf::Random& random)
     {
       gf::Array2D<MapCell, int32_t> map(MapSize);
 
@@ -73,12 +74,9 @@ namespace be {
         } else {
           map(position).type = CellType::Ground;
         }
+
+        map(position).tile = random.computeUniformInteger(0, 3);
       }
-
-      return map;
-    }
-
-    void sanitizeMap(gf::Array2D<MapCell, int32_t>& map) {
 
       for (gf::Vector2i position : map.getPositionRange()) {
         if (position.y > 0 && map(position).type == CellType::Block && map({ position.x, position.y - 1 }).type == CellType::Ground) {
@@ -86,13 +84,28 @@ namespace be {
         }
       }
 
+      return map;
+    }
+
+    HeroState computeHero(const gf::Array2D<RawCell>& raw, gf::Random& random)
+    {
+      HeroState state = {};
+
+      for (;;) {
+        gf::Vector2i position = random.computePosition(gf::RectI::fromSize(raw.getSize()));
+
+        if (raw(position) != RawCell::Ground) {
+          continue;
+        }
+
+        state.location = (position + 0.5f) * TileSize;
+        break;
+      }
+
+      return state;
     }
 
   }
-
-
-
-
 
   GameState generateNewGame(gf::Random& random)
   {
@@ -100,9 +113,8 @@ namespace be {
 
 
     GameState state = {};
-
-    state.map.cells = transformRawMap(raw);
-    sanitizeMap(state.map.cells);
+    state.map.cells = transformRawMap(raw, random);
+    state.hero = computeHero(raw, random);
 
     return state;
   }

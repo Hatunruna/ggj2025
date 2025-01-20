@@ -8,10 +8,10 @@ namespace be {
 
   GameHub::GameHub()
   : GameManager("Bubble Express", { be::GameDataDirectory })
+  , state(generateNewGame(random))
   , start(*this)
   , world(*this)
   {
-    state = generateNewGame(random);
     pushScene(start);
   }
 

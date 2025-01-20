@@ -31,13 +31,13 @@ namespace be {
     for (auto position : cells.getPositionRange()) {
       switch (cells(position).type) {
         case CellType::Ground:
-          tiled.setTile(position, tilesetId, 0);
+          tiled.setTile(position, tilesetId, 0 + cells(position).tile);
           break;
         case CellType::Cliff:
-          tiled.setTile(position, tilesetId, 4);
+          tiled.setTile(position, tilesetId, 4 + cells(position).tile);
           break;
         case CellType::Block:
-          tiled.setTile(position, tilesetId, 8);
+          tiled.setTile(position, tilesetId, 8 + cells(position).tile);
           break;
       }
     }

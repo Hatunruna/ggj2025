@@ -15,6 +15,7 @@ namespace be {
 
   struct MapCell {
     CellType type;
+    int tile = 0;
   };
 
   template<typename Archive>

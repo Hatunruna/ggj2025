@@ -5,6 +5,7 @@
 
 #include <gf/Path.h>
 
+#include "HeroState.h"
 #include "MapState.h"
 
 namespace be {
@@ -13,6 +14,7 @@ namespace be {
     static constexpr uint16_t Version = 1;
 
     MapState map;
+    HeroState hero;
 
     void loadFromFile(const gf::Path& filename);
     void saveToFile(const gf::Path& filename);
@@ -20,7 +22,7 @@ namespace be {
 
   template<typename Archive>
   Archive& operator|(Archive& ar, GameState& state) {
-    return ar | state.map;
+    return ar | state.map | state.hero;
   }
 
 }

@@ -5,6 +5,7 @@
 #include <gf/Views.h>
 
 #include "MapEntity.h"
+#include "HeroEntity.h"
 
 namespace be {
   struct GameHub;
@@ -18,6 +19,7 @@ namespace be {
 
     GameHub& m_game;
     MapEntity m_mapEntity;
+    HeroEntity m_heroEntity;
 
     gf::ZoomingViewAdaptor m_adaptor;
 
