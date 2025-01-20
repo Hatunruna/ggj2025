@@ -6,6 +6,7 @@
 #include "GameData.h"
 #include "GameState.h"
 #include "StartScene.h"
+#include "WorldScene.h"
 
 namespace be {
 
@@ -16,6 +17,7 @@ namespace be {
     GameState state;
 
     StartScene start;
+    WorldScene world;
   };
 
 

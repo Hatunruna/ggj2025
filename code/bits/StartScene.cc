@@ -19,6 +19,7 @@ namespace be {
 //     m_startAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::B);
 //     m_startAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::X);
 //     m_startAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::Y);
+    m_startAction.addScancodeKeyControl(gf::Scancode::Space);
     addAction(m_startAction);
 
 //     m_fullscreenAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::Guide);
@@ -37,7 +38,7 @@ namespace be {
     }
 
     if (m_startAction.isActive()) {
-//       m_game.replaceScene(m_game.introduction, m_game.blackout, gf::seconds(TransitionDelay));
+      m_game.replaceScene(m_game.world); // , m_game.blackout, gf::seconds(TransitionDelay));
     }
   }
 

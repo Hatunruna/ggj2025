@@ -5,10 +5,14 @@
 
 #include <gf/Path.h>
 
+#include "MapState.h"
+
 namespace be {
 
   struct GameState {
     static constexpr uint16_t Version = 1;
+
+    MapState map;
 
     void loadFromFile(const gf::Path& filename);
     void saveToFile(const gf::Path& filename);
@@ -16,7 +20,7 @@ namespace be {
 
   template<typename Archive>
   Archive& operator|(Archive& ar, GameState& state) {
-    return ar;
+    return ar | state.map;
   }
 
 }
