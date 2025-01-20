@@ -1,5 +1,7 @@
 #include "ProcGen.h"
 
+#include <gf/VectorOps.h>
+
 #include "HeroState.h"
 #include "MapSettings.h"
 #include "MapState.h"
@@ -8,11 +10,17 @@ namespace be {
 
   namespace {
 
+    // map generation settings
+
     constexpr float Threshold       = 0.4f;
     constexpr int SurvivalThreshold = 6;
     constexpr int BirthThreshold    = 8;
     constexpr int Iterations        = 7;
 
+    // producers settings
+
+    constexpr int ProducerCount = 100;
+    constexpr float MinDistanceFromOther = 1000.0f;
 
     enum class RawCell {
       Ground,
@@ -63,6 +71,21 @@ namespace be {
       return raw;
     }
 
+    bool isLargeGround(const gf::Array2D<RawCell>& raw, gf::Vector2i position) {
+      if (raw(position) != RawCell::Ground) {
+        return false;
+      }
+
+      int count = 0;
+
+      for (gf::Vector2i neighbor : raw.get8NeighborsRange(position)) {
+        if (raw(neighbor) == RawCell::Ground) {
+          ++count;
+        }
+      }
+
+      return count == 8;
+    }
 
     gf::Array2D<MapCell, int32_t> transformRawMap(const gf::Array2D<RawCell>& raw, gf::Random& random)
     {
@@ -92,9 +115,9 @@ namespace be {
       HeroState state = {};
 
       for (;;) {
-        gf::Vector2i position = random.computePosition(gf::RectI::fromSize(raw.getSize()));
+        const gf::Vector2i position = random.computePosition(gf::RectI::fromSize(raw.getSize()));
 
-        if (raw(position) != RawCell::Ground) {
+        if (!isLargeGround(raw, position)) {
           continue;
         }
 
@@ -105,16 +128,61 @@ namespace be {
       return state;
     }
 
+    bool isFarFromProducers(const std::vector<BubbleProducerState>& producers, gf::Vector2f location, float minDistance)
+    {
+      for (auto& producer : producers) {
+        if (gf::squareDistance(producer.location, location) < gf::square(minDistance)) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    std::vector<BubbleProducerState> computeProducers(const gf::Array2D<RawCell>& raw, gf::Random& random)
+    {
+      std::vector<BubbleProducerState> producers;
+
+      for (int i = 0; i < ProducerCount; ++i) {
+        for (;;) {
+          const gf::Vector2i position = random.computePosition(gf::RectI::fromSize(raw.getSize() - 1));
+
+          if (!isLargeGround(raw, position)) {
+            continue;
+          }
+
+          const gf::Vector2f location = (position + 0.5f) * TileSize;
+
+          if (!isFarFromProducers(producers, location, MinDistanceFromOther)) {
+            continue;
+          }
+
+          BubbleProducerState state = {};
+          state.status = BubbleProducerStatus::Growing;
+          state.location = location;
+          state.minSize = 0.1f;
+          state.maxSize = 1.0f;
+          state.growthRate = 0.02f;
+          state.size = random.computeUniformFloat(state.minSize, state.maxSize);
+
+          producers.push_back(std::move(state));
+          break;
+        }
+      }
+
+      return producers;
+    }
+
   }
 
   GameState generateNewGame(gf::Random& random)
   {
     auto raw = generateRawMap(random);
 
-
     GameState state = {};
     state.map.cells = transformRawMap(raw, random);
     state.hero = computeHero(raw, random);
+    state.producers = computeProducers(raw, random);
 
     return state;
   }

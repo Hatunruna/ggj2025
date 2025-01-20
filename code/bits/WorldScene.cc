@@ -9,12 +9,16 @@ namespace be {
   , m_game(game)
   , m_mapEntity(game)
   , m_heroEntity(game)
+  , m_bubbleEntity(game)
   , m_adaptor(game.getRenderer(), getWorldView())
   {
     setClearColor(gf::Color::Black);
 
+    addModel(game.state);
+
     addWorldEntity(m_mapEntity);
     addWorldEntity(m_heroEntity);
+    addWorldEntity(m_bubbleEntity);
 
     setWorldViewSize({ 512, 512 });
     setWorldViewCenter(game.state.hero.location);

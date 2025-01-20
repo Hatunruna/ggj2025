@@ -4,8 +4,9 @@
 #include <gf/Scene.h>
 #include <gf/Views.h>
 
-#include "MapEntity.h"
+#include "BubbleEntity.h"
 #include "HeroEntity.h"
+#include "MapEntity.h"
 
 namespace be {
   struct GameHub;
@@ -20,6 +21,7 @@ namespace be {
     GameHub& m_game;
     MapEntity m_mapEntity;
     HeroEntity m_heroEntity;
+    BubbleEntity m_bubbleEntity;
 
     gf::ZoomingViewAdaptor m_adaptor;
 
