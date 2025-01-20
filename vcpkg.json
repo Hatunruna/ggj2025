@@ -3,6 +3,7 @@
     "boost-algorithm",
     "boost-container",
     "boost-heap",
+    "chipmunk",
     "freetype",
     "pugixml",
     "sdl2",
