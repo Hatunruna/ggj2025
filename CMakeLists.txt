@@ -35,11 +35,20 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/code/config.h.in ${CMAKE_CURRENT_BINA
 
 add_executable(${GAME}
   code/main.cc
+  code/bits/BubbleEntity.cc
+  code/bits/BubbleState.cc
   code/bits/GameData.cc
   code/bits/GameHub.cc
   code/bits/GameState.cc
+  code/bits/HeroEntity.cc
+  code/bits/HeroState.cc
+  code/bits/MapEntity.cc
+  code/bits/MapSettings.cc
+  code/bits/MapState.cc
+  code/bits/ProcGen.cc
   code/bits/StartScene.cc
   code/bits/TitleEntity.cc
+  code/bits/WorldScene.cc
 )
 
 if (WIN32)
