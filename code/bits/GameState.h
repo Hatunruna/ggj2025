@@ -6,19 +6,23 @@
 #include <gf/Path.h>
 #include <gf/Model.h>
 
+#include "BubbleState.h"
 #include "HeroState.h"
 #include "MapState.h"
-#include "BubbleState.h"
+#include "PhysicsModel.h"
 
 namespace be {
 
   struct GameState : gf::Model {
     static constexpr uint16_t Version = 1;
 
+    PhysicsModel physics;
+
     MapState map;
     HeroState hero;
     std::vector<BubbleProducerState> producers;
 
+    void initializePhysics();
     void update(gf::Time time);
 
     void loadFromFile(const gf::Path& filename);

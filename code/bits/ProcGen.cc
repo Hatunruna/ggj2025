@@ -184,6 +184,8 @@ namespace be {
     state.hero = computeHero(raw, random);
     state.producers = computeProducers(raw, random);
 
+    state.initializePhysics();
+
     return state;
   }
 

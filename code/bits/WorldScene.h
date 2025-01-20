@@ -17,8 +17,16 @@ namespace be {
 
   private:
     void doProcessEvent(gf::Event& event) override;
+    void doHandleActions(gf::Window& window) override;
+    void doRender(gf::RenderTarget &target, const gf::RenderStates &states) override;
 
     GameHub& m_game;
+
+    gf::Action m_upAction;
+    gf::Action m_leftAction;
+    gf::Action m_downAction;
+    gf::Action m_rightAction;
+
     MapEntity m_mapEntity;
     HeroEntity m_heroEntity;
     BubbleEntity m_bubbleEntity;
