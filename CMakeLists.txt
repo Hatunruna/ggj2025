@@ -8,6 +8,18 @@ project(${GAME}
 
 include(GNUInstallDirs)
 
+if (CMAKE_TOOLCHAIN_FILE MATCHES "vcpkg.cmake$")
+  find_package(unofficial-chipmunk CONFIG REQUIRED)
+  set(CHIPMUNK_LIBS unofficial::chipmunk::chipmunk)
+else ()
+  find_library(CHIPMUNK_LIBS NAMES libchipmunk, chipmunk)
+  if (CHIPMUNK_LIBS)
+    message(STATUS "Chipmunk2D found: ${CHIPMUNK_LIBS}")
+  else ()
+    message(FATAL_ERROR "Chipmunk2D not found")
+  endif ()
+endif ()
+
 set(BUILD_TESTING OFF CACHE BOOL "Enable GF tests" FORCE)
 set(GF_BUILD_EXAMPLES OFF CACHE BOOL "Enable GF examples" FORCE)
 set(GF_BUILD_DOCUMENTATION OFF CACHE BOOL "Enable GF documentation" FORCE)
@@ -45,6 +57,7 @@ add_executable(${GAME}
   code/bits/MapEntity.cc
   code/bits/MapSettings.cc
   code/bits/MapState.cc
+  code/bits/PhysicsModel.cc
   code/bits/ProcGen.cc
   code/bits/StartScene.cc
   code/bits/TitleEntity.cc
@@ -64,6 +77,7 @@ target_include_directories(${GAME}
 target_link_libraries(${GAME}
   PRIVATE
     gf0
+    ${CHIPMUNK_LIBS}
 )
 
 if (WIN32)
