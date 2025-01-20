@@ -1,5 +1,5 @@
-#ifndef be_TITLE_ENTITY_H
-#define be_TITLE_ENTITY_H
+#ifndef BE_TITLE_ENTITY_H
+#define BE_TITLE_ENTITY_H
 
 #include <gf/Entity.h>
 #include <gf/Font.h>
@@ -21,4 +21,4 @@ namespace be {
 }
 
 
-#endif // be_TITLE_ENTITY_H
+#endif // BE_TITLE_ENTITY_H

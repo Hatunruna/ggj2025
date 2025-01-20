@@ -32,7 +32,7 @@ namespace be {
 
     unsigned titleCharacterSize = coords.getRelativeCharacterSize(0.1f);
 
-    gf::Text title("The Title of The Game", m_font, titleCharacterSize);
+    gf::Text title("Bubble Express", m_font, titleCharacterSize);
     title.setColor(gf::Color::White);
     title.setPosition(coords.getCenter());
     title.setAnchor(gf::Anchor::Center);
@@ -40,7 +40,7 @@ namespace be {
 
     unsigned subtitleCharacterSize = coords.getRelativeCharacterSize(0.05f);
 
-    gf::Text subtitle("The Subtitle of the Game", m_font, subtitleCharacterSize);
+    gf::Text subtitle("Deliver the bubbles", m_font, subtitleCharacterSize);
     subtitle.setColor(gf::Color::White);
     subtitle.setPosition(coords.getRelativePoint({ 0.5f, 0.6f }));
     subtitle.setAnchor(gf::Anchor::Center);

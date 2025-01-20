@@ -1,5 +1,5 @@
-#ifndef be_START_SCENE_H
-#define be_START_SCENE_H
+#ifndef BE_START_SCENE_H
+#define BE_START_SCENE_H
 
 #include <gf/Scene.h>
 #include <gf/Action.h>
@@ -28,4 +28,4 @@ namespace be {
 
 }
 
-#endif // be_START_SCENE_H
+#endif // BE_START_SCENE_H

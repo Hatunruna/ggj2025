@@ -1,5 +1,5 @@
-#ifndef be_GAME_STATE_H
-#define be_GAME_STATE_H
+#ifndef BE_GAME_STATE_H
+#define BE_GAME_STATE_H
 
 #include <cstdint>
 
@@ -22,4 +22,4 @@ namespace be {
 }
 
 
-#endif // be_GAME_STATE_H
+#endif // BE_GAME_STATE_H

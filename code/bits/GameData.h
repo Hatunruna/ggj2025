@@ -1,5 +1,5 @@
-#ifndef be_GAME_DATA_H
-#define be_GAME_DATA_H
+#ifndef BE_GAME_DATA_H
+#define BE_GAME_DATA_H
 
 namespace be {
 
@@ -9,4 +9,4 @@ namespace be {
 
 }
 
-#endif // be_GAME_DATA_H
+#endif // BE_GAME_DATA_H

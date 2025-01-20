@@ -1,5 +1,5 @@
-#ifndef be_GAME_HUB_H
-#define be_GAME_HUB_H
+#ifndef BE_GAME_HUB_H
+#define BE_GAME_HUB_H
 
 #include <gf/GameManager.h>
 
@@ -22,4 +22,4 @@ namespace be {
 }
 
 
-#endif // be_GAME_HUB_H
+#endif // BE_GAME_HUB_H
