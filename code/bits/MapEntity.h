@@ -3,6 +3,7 @@
 
 #include <gf/Entity.h>
 #include <gf/Texture.h>
+#include <gf/TileLayer.h>
 
 namespace be {
   struct GameHub;
@@ -17,6 +18,7 @@ namespace be {
   private:
     GameState& m_state;
     gf::Texture& m_texture;
+    gf::TileLayer m_tiled;
   };
 
 }
