@@ -5,6 +5,7 @@
 #include <gf/Views.h>
 
 #include "BubbleEntity.h"
+#include "CityEntity.h"
 #include "HeroEntity.h"
 #include "MapEntity.h"
 #include "PhysicsDebug.h"
@@ -34,7 +35,7 @@ namespace be {
     MapEntity m_mapEntity;
     HeroEntity m_heroEntity;
     BubbleEntity m_bubbleEntity;
-
+    CityEntity m_cityEntity;
 
     PhysicsDebug m_physicsDebug;
 

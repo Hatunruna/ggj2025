@@ -3,10 +3,14 @@
 
 #include <cstdint>
 
+#include <array>
+#include <vector>
+
 #include <gf/Path.h>
 #include <gf/Model.h>
 
 #include "BubbleState.h"
+#include "CityState.h"
 #include "HeroState.h"
 #include "MapState.h"
 #include "PhysicsModel.h"
@@ -22,6 +26,7 @@ namespace be {
     HeroState hero;
     std::vector<BubbleProducerState> producers;
     std::vector<BubbleState> bubbles;
+    std::array<CityState, CityCount> cities;
 
     void initializePhysics();
 
@@ -36,7 +41,7 @@ namespace be {
 
   template<typename Archive>
   Archive& operator|(Archive& ar, GameState& state) {
-    return ar | state.map | state.hero | state.producers | state.bubbles;
+    return ar | state.map | state.hero | state.producers | state.bubbles | state.cities;
   }
 
 }

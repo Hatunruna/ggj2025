@@ -17,6 +17,7 @@ namespace be {
   , m_mapEntity(game)
   , m_heroEntity(game)
   , m_bubbleEntity(game)
+  , m_cityEntity(game)
   , m_physicsDebug(game)
   , m_adaptor(game.getRenderer(), getWorldView())
   {
@@ -54,6 +55,7 @@ namespace be {
     addWorldEntity(m_mapEntity);
     addWorldEntity(m_heroEntity);
     addWorldEntity(m_bubbleEntity);
+    addWorldEntity(m_cityEntity);
 
     addWorldEntity(m_physicsDebug);
 
