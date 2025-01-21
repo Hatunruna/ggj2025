@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+#include <chipmunk/chipmunk.h>
+
 #include <gf/Vector.h>
 #include <gf/VectorOps.h>
 #include <gf/Time.h>
@@ -38,6 +40,8 @@ namespace be {
 
   struct BubbleState {
     float size = 0.0f;
+    cpBody* body = nullptr;
+    cpConstraint* pin = nullptr;
   };
 
   template<typename Archive>

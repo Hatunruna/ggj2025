@@ -30,6 +30,17 @@ namespace be {
       bubbleSprite.setScale(producer.size);
       target.draw(bubbleSprite, states);
     }
+
+    bubbleSprite.setAnchor(gf::Anchor::Center);
+
+    for (auto& bubble : m_state.bubbles) {
+      cpVect location = cpBodyGetPosition(bubble.body);
+
+      bubbleSprite.setPosition(gf::vec(location.x, location.y));
+      bubbleSprite.setScale(bubble.size);
+      target.draw(bubbleSprite, states);
+    }
+
   }
 
 }

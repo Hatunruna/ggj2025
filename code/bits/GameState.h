@@ -21,8 +21,13 @@ namespace be {
     MapState map;
     HeroState hero;
     std::vector<BubbleProducerState> producers;
+    std::vector<BubbleState> bubbles;
 
     void initializePhysics();
+
+    void moveHero(gf::Vector2i direction);
+    void tryToTakeBubble();
+
     void update(gf::Time time);
 
     void loadFromFile(const gf::Path& filename);
@@ -31,7 +36,7 @@ namespace be {
 
   template<typename Archive>
   Archive& operator|(Archive& ar, GameState& state) {
-    return ar | state.map | state.hero;
+    return ar | state.map | state.hero | state.producers | state.bubbles;
   }
 
 }

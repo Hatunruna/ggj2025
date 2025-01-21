@@ -7,6 +7,7 @@
 #include <gf/Serialization.h>
 #include <gf/SerializationOps.h>
 #include <gf/Streams.h>
+#include <gf/VectorOps.h>
 
 namespace be {
 
@@ -17,6 +18,12 @@ namespace be {
     constexpr cpFloat ProducerRadius = 32.0;
 
     constexpr cpFloat MapRadius = 0.1;
+
+    constexpr cpFloat BubbleMass = 1.0;
+    constexpr cpFloat BubbleRadius = 64.0;
+    constexpr cpFloat BubbleRelaxation = 1.5;
+
+    constexpr float ProducerDistance = HeroRadius + ProducerRadius + 50.0f;
 
     gf::Vector2f toVec(cpVect raw) {
       return gf::vec(raw.x, raw.y);
@@ -155,7 +162,78 @@ namespace be {
       cpSpaceAddShape(space, producerShape);
     }
 
+    /*
+     * Bubbles
+     */
 
+    for (auto& bubble : bubbles) {
+      bubble.body = cpBodyNew(BubbleMass, cpMomentForCircle(BubbleMass, 0.0, bubble.size * BubbleRadius, cpvzero));
+      cpBodySetVelocity(bubble.body, cpvzero);
+      cpSpaceAddBody(space, bubble.body);
+
+      cpShape* shape = cpCircleShapeNew(bubble.body, bubble.size * BubbleRadius, cpvzero);
+      cpShapeSetElasticity(shape, 0.0f);
+      cpShapeSetFriction(shape, 0.7f);
+      cpSpaceAddShape(space, shape);
+
+      bubble.pin = cpSlideJointNew(hero.body, bubble.body, cpvzero, cpvzero, (HeroRadius + bubble.size * BubbleRadius), (HeroRadius + bubble.size * BubbleRadius) * BubbleRelaxation);
+      cpSpaceAddConstraint(space, bubble.pin);
+    }
+
+
+  }
+
+  void GameState::moveHero(gf::Vector2i direction)
+  {
+    if (direction != gf::vec(0, 0)) {
+      // gf::Log::debug("direction: %i,%i\n", direction.x, direction.y);
+
+      const gf::Vector2f unit = gf::normalize(gf::Vector2f(direction));
+      const float rotation = gf::angle(unit);
+      const gf::Vector2f velocity = HeroVelocity * unit;
+
+      cpBodySetAngle(hero.body, rotation);
+      cpBodySetAngle(hero.control, rotation);
+      cpBodySetVelocity(hero.control, cpv(velocity.x, velocity.y));
+    } else {
+      cpBodySetVelocity(hero.control, cpvzero);
+    }
+  }
+
+  void GameState::tryToTakeBubble()
+  {
+    cpSpace* space = physics.getSpace();
+
+    for (auto& producer : producers) {
+      if (gf::squareDistance(producer.location, hero.location) > gf::square(ProducerDistance)) {
+        continue;
+      }
+
+      gf::Log::debug("Bubble taken!\n");
+
+      BubbleState bubble = {};
+
+      bubble.size = producer.size;
+
+      const gf::Vector2f location = producer.location - gf::diry(bubble.size * BubbleRadius);
+
+      bubble.body = cpBodyNew(BubbleMass, cpMomentForCircle(BubbleMass, 0.0, bubble.size * BubbleRadius, cpvzero));
+      cpBodySetVelocity(bubble.body, cpvzero);
+      cpBodySetPosition(bubble.body, cpv(location.x, location.y));
+      cpSpaceAddBody(space, bubble.body);
+
+      cpShape* shape = cpCircleShapeNew(bubble.body, bubble.size * BubbleRadius, cpvzero);
+      cpShapeSetElasticity(shape, 0.0f);
+      cpShapeSetFriction(shape, 0.7f);
+      cpSpaceAddShape(space, shape);
+
+      bubble.pin = cpSlideJointNew(hero.body, bubble.body, cpvzero, cpvzero, (HeroRadius + bubble.size * BubbleRadius), (HeroRadius + bubble.size * BubbleRadius) * BubbleRelaxation);
+      cpSpaceAddConstraint(space, bubble.pin);
+
+      bubbles.push_back(bubble);
+
+      producer.status = BubbleProducerStatus::Emerging;
+    }
   }
 
   void GameState::update(gf::Time time)

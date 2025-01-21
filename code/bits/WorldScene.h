@@ -27,6 +27,7 @@ namespace be {
     gf::Action m_leftAction;
     gf::Action m_downAction;
     gf::Action m_rightAction;
+    gf::Action m_takeAction;
 
     gf::Action m_debugAction;
 

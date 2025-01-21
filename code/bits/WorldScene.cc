@@ -12,6 +12,7 @@ namespace be {
   , m_leftAction("left")
   , m_downAction("down")
   , m_rightAction("right")
+  , m_takeAction("take")
   , m_debugAction("debug")
   , m_mapEntity(game)
   , m_heroEntity(game)
@@ -40,6 +41,10 @@ namespace be {
     m_rightAction.addGamepadAxisControl(gf::AnyGamepad, gf::GamepadAxis::LeftX, gf::GamepadAxisDirection::Positive);
     m_rightAction.setContinuous();
     addAction(m_rightAction);
+
+    m_takeAction.addScancodeKeyControl(gf::Scancode::Space);
+    m_takeAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::A);
+    addAction(m_takeAction);
 
     m_debugAction.addScancodeKeyControl(gf::Scancode::F12);
     addAction(m_debugAction);
@@ -77,18 +82,10 @@ namespace be {
       direction.x = +1;
     }
 
-    if (direction != gf::vec(0, 0)) {
-      // gf::Log::debug("direction: %i,%i\n", direction.x, direction.y);
+    m_game.state.moveHero(direction);
 
-      const gf::Vector2f unit = gf::normalize(gf::Vector2f(direction));
-      const float rotation = gf::angle(unit);
-      const gf::Vector2f velocity = HeroVelocity * unit;
-
-      cpBodySetAngle(m_game.state.hero.body, rotation);
-      cpBodySetAngle(m_game.state.hero.control, rotation);
-      cpBodySetVelocity(m_game.state.hero.control, cpv(velocity.x, velocity.y));
-    } else {
-      cpBodySetVelocity(m_game.state.hero.control, cpvzero);
+    if (m_takeAction.isActive()) {
+      m_game.state.tryToTakeBubble();
     }
 
     if (m_debugAction.isActive()) {
