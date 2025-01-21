@@ -1,10 +1,12 @@
 #include "ProcGen.h"
 
-#include <algorithm>
 #include <cassert>
 
-#include <queue>
+#include <algorithm>
+#include <filesystem>
+#include <fstream>
 #include <limits>
+#include <queue>
 
 #include <gf/Log.h>
 #include <gf/VectorOps.h>
@@ -13,6 +15,7 @@
 #include "HeroState.h"
 #include "MapSettings.h"
 #include "MapState.h"
+#include "Namegen.h"
 #include "Support.h"
 
 namespace be {
@@ -245,8 +248,32 @@ namespace be {
       return producers;
     }
 
-    std::array<CityState, CityCount> computeCities(gf::Array2D<RawCell>& raw, gf::Random& random)
+    std::array<CityState, CityCount> computeCities(gf::Array2D<RawCell>& raw, gf::Random& random, gf::ResourceManager& resources)
     {
+      std::filesystem::path filename = resources.getAbsolutePath("cities.txt");
+      std::ifstream file(filename);
+
+      std::vector<std::string> data;
+
+      for (std::string line; std::getline(file, line); ) {
+        if (line.empty() || line == "\n") {
+          continue;
+        }
+
+        data.push_back(std::move(line));
+      }
+
+      NamegenSettings settings = {};
+      settings.minLength = 3;
+      settings.maxLength = 15;
+
+      NamegenManager namegen(data, 3, 0.001, true);
+      auto names = namegen.generateMultiple(random, CityCount, gf::seconds(0.5), settings);
+
+      for (auto& name : names) {
+        gf::Log::debug("- %s\n", name.c_str());
+      }
+
       std::array<CityState, CityCount> cities;
       std::array<gf::Vector2i, CityCount> positions;
 
@@ -270,10 +297,9 @@ namespace be {
       }
 
       static_assert(CityCount < 26);
-      std::string name = "A";
 
       for (std::size_t i = 0; i < CityCount; ++i) {
-        cities[i].name = name;
+        cities[i].name = names[i];
         cities[i].location = (positions[i] + 0.5f) * TileSize;
 
         std::vector<gf::Vector2i> points;
@@ -287,8 +313,6 @@ namespace be {
         for (auto point : points) {
           raw(point) = RawCell::Block;
         }
-
-        name[0]++;
       }
 
       return cities;
@@ -296,14 +320,14 @@ namespace be {
 
   }
 
-  GameState generateNewGame(gf::Random& random)
+  GameState generateNewGame(gf::Random& random, gf::ResourceManager& resources)
   {
     gf::Log::debug("Generate raw map\n");
     auto raw = generateRawMap(random);
 
     GameState state = {};
     gf::Log::debug("Compute cities\n");
-    state.cities = computeCities(raw, random);
+    state.cities = computeCities(raw, random, resources);
     gf::Log::debug("Sanitize raw map\n");
     sanitizeMap(raw);
 

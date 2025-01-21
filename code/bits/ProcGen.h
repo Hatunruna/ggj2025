@@ -2,12 +2,13 @@
 #define BE_PROCGEN_H
 
 #include <gf/Random.h>
+#include <gf/ResourceManager.h>
 
 #include "GameState.h"
 
 namespace be {
 
-  GameState generateNewGame(gf::Random& random);
+  GameState generateNewGame(gf::Random& random, gf::ResourceManager& resources);
 
 }
 
