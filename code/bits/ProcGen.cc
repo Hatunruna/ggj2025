@@ -33,7 +33,6 @@ namespace be {
     enum class RawCell {
       Ground,
       Block,
-      Limit,
     };
 
     gf::Array2D<RawCell> generateRawMap(gf::Random& random)
