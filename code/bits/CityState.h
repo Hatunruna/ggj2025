@@ -8,6 +8,7 @@
 namespace be {
 
   constexpr std::size_t CityCount = 4;
+  constexpr int CityRadius = 32;
 
   struct CityState {
     std::string name;

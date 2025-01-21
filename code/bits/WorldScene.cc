@@ -55,7 +55,7 @@ namespace be {
     addWorldEntity(m_mapEntity);
     addWorldEntity(m_heroEntity);
     addWorldEntity(m_bubbleEntity);
-    addWorldEntity(m_cityEntity);
+    // addWorldEntity(m_cityEntity);
 
     addWorldEntity(m_physicsDebug);
 

@@ -14,11 +14,8 @@
 ## Code
 
 - generation
-  - remove isolated ground
-    - make a search in the graph to find the biggest connected component
-    - remove all tiles that are not in the biggest connecter component
-  - cities: make a circle of moutains
 - physics
+  - remove the last bubble
   - make bubble more stable
   - performance: look at spatial hash: https://chipmunk-physics.net/release/ChipmunkLatest-Docs/#cpSpace-SpatialHash
 - minimap

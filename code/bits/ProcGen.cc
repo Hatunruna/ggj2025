@@ -1,11 +1,19 @@
 #include "ProcGen.h"
 
+#include <algorithm>
+#include <cassert>
+
+#include <queue>
+#include <limits>
+
+#include <gf/Log.h>
 #include <gf/VectorOps.h>
 
 #include "CityState.h"
 #include "HeroState.h"
 #include "MapSettings.h"
 #include "MapState.h"
+#include "Support.h"
 
 namespace be {
 
@@ -78,6 +86,63 @@ namespace be {
       return raw;
     }
 
+    constexpr std::size_t NoZone = std::numeric_limits<std::size_t>::max();
+
+    std::size_t traverseMap(const gf::Array2D<RawCell>& raw, gf::Array2D<std::size_t, int>& zones, gf::Vector2i start, std::size_t zone)
+    {
+      std::queue<gf::Vector2i> queue;
+      queue.push(start);
+      std::size_t count = 0;
+
+      zones(start) = zone;
+
+      while (!queue.empty()) {
+        gf::Vector2i current = queue.front();
+        queue.pop();
+        ++count;
+
+        assert(raw(current) == RawCell::Ground);
+        assert(zones(current) == zone);
+
+        for (auto neighbor : raw.get4NeighborsRange(current)) {
+          if (raw(neighbor) == RawCell::Block) {
+            continue;
+          }
+
+          if (zones(neighbor) == NoZone) {
+            zones(neighbor) = zone;
+            queue.push(neighbor);
+          }
+        }
+      }
+
+      return count;
+    }
+
+    void sanitizeMap(gf::Array2D<RawCell>& raw)
+    {
+      gf::Array2D<std::size_t, int> zones(raw.getSize(), NoZone);
+      std::vector<std::size_t> counts;
+
+      for (auto position : raw.getPositionRange()) {
+        if (raw(position) == RawCell::Ground && zones(position) == NoZone) {
+          auto count = traverseMap(raw, zones, position, counts.size());
+          counts.push_back(count);
+        }
+      }
+
+      auto iterator = std::max_element(counts.begin(), counts.end());
+      assert(iterator != counts.end());
+
+      const std::size_t good = std::distance(counts.begin(), iterator);
+
+      for (auto position : raw.getPositionRange()) {
+        if (zones(position) != good) {
+          raw(position) = RawCell::Block;
+        }
+      }
+    }
+
     bool isLargeGround(const gf::Array2D<RawCell>& raw, gf::Vector2i position) {
       if (raw(position) != RawCell::Ground) {
         return false;
@@ -122,7 +187,7 @@ namespace be {
       HeroState state = {};
 
       for (;;) {
-        const gf::Vector2i position = random.computePosition(gf::RectI::fromSize(raw.getSize()));
+        const gf::Vector2i position = random.computePosition(gf::RectI::fromSize(raw.getSize() - 1));
 
         if (!isLargeGround(raw, position)) {
           continue;
@@ -180,15 +245,14 @@ namespace be {
       return producers;
     }
 
-    std::array<CityState, CityCount> computeCities(const gf::Array2D<RawCell>& raw, gf::Random& random)
+    std::array<CityState, CityCount> computeCities(gf::Array2D<RawCell>& raw, gf::Random& random)
     {
       std::array<CityState, CityCount> cities;
-
       std::array<gf::Vector2i, CityCount> positions;
 
       for (;;) {
         for (std::size_t i = 0; i < CityCount; ++i) {
-          positions[i] = random.computePosition(gf::RectI::fromSize(raw.getSize() - 1).shrink(32));
+          positions[i] = random.computePosition(gf::RectI::fromSize(raw.getSize() - 1).shrink(CityRadius));
         }
 
         int minDistance = std::numeric_limits<int>::max();
@@ -211,6 +275,19 @@ namespace be {
       for (std::size_t i = 0; i < CityCount; ++i) {
         cities[i].name = name;
         cities[i].location = (positions[i] + 0.5f) * TileSize;
+
+        std::vector<gf::Vector2i> points;
+        points.push_back(positions[i]);
+
+        for (int radius = 1; radius <= CityRadius; ++radius) {
+          auto circle = generateCircle(positions[i], radius);
+          points.insert(points.end(), circle.begin(), circle.end());
+        }
+
+        for (auto point : points) {
+          raw(point) = RawCell::Block;
+        }
+
         name[0]++;
       }
 
@@ -221,14 +298,23 @@ namespace be {
 
   GameState generateNewGame(gf::Random& random)
   {
+    gf::Log::debug("Generate raw map\n");
     auto raw = generateRawMap(random);
 
     GameState state = {};
-    state.map.cells = transformRawMap(raw, random);
-    state.hero = computeHero(raw, random);
-    state.producers = computeProducers(raw, random);
+    gf::Log::debug("Compute cities\n");
     state.cities = computeCities(raw, random);
+    gf::Log::debug("Sanitize raw map\n");
+    sanitizeMap(raw);
 
+    gf::Log::debug("Transform raw map\n");
+    state.map.cells = transformRawMap(raw, random);
+    gf::Log::debug("Compute hero\n");
+    state.hero = computeHero(raw, random);
+    gf::Log::debug("Compute producers\n");
+    state.producers = computeProducers(raw, random);
+
+    gf::Log::debug("Initialize physics\n");
     state.initializePhysics();
 
     return state;
