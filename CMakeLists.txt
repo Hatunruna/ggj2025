@@ -49,6 +49,8 @@ add_executable(${GAME}
   code/main.cc
   code/bits/BubbleEntity.cc
   code/bits/BubbleState.cc
+  code/bits/CityEntity.cc
+  code/bits/CityState.cc
   code/bits/GameData.cc
   code/bits/GameHub.cc
   code/bits/GameState.cc
