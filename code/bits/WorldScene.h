@@ -7,6 +7,7 @@
 #include "BubbleEntity.h"
 #include "HeroEntity.h"
 #include "MapEntity.h"
+#include "PhysicsDebug.h"
 
 namespace be {
   struct GameHub;
@@ -27,9 +28,14 @@ namespace be {
     gf::Action m_downAction;
     gf::Action m_rightAction;
 
+    gf::Action m_debugAction;
+
     MapEntity m_mapEntity;
     HeroEntity m_heroEntity;
     BubbleEntity m_bubbleEntity;
+
+
+    PhysicsDebug m_physicsDebug;
 
     gf::ZoomingViewAdaptor m_adaptor;
 

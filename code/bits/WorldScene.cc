@@ -12,9 +12,11 @@ namespace be {
   , m_leftAction("left")
   , m_downAction("down")
   , m_rightAction("right")
+  , m_debugAction("debug")
   , m_mapEntity(game)
   , m_heroEntity(game)
   , m_bubbleEntity(game)
+  , m_physicsDebug(game)
   , m_adaptor(game.getRenderer(), getWorldView())
   {
     setClearColor(gf::Color::Black);
@@ -39,11 +41,16 @@ namespace be {
     m_rightAction.setContinuous();
     addAction(m_rightAction);
 
+    m_debugAction.addScancodeKeyControl(gf::Scancode::F12);
+    addAction(m_debugAction);
+
     addModel(game.state);
 
     addWorldEntity(m_mapEntity);
     addWorldEntity(m_heroEntity);
     addWorldEntity(m_bubbleEntity);
+
+    addWorldEntity(m_physicsDebug);
 
     setWorldViewSize({ 512, 512 });
     setWorldViewCenter(game.state.hero.location);
@@ -82,6 +89,10 @@ namespace be {
       cpBodySetVelocity(m_game.state.hero.control, cpv(velocity.x, velocity.y));
     } else {
       cpBodySetVelocity(m_game.state.hero.control, cpvzero);
+    }
+
+    if (m_debugAction.isActive()) {
+      m_physicsDebug.toggleDebug();
     }
 
   }
