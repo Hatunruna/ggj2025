@@ -31,6 +31,7 @@ namespace be {
 
   std::optional<char> NamegenModel::generate(const std::string& context, gf::Random& random) const
   {
+    assert(context.size() == m_order);
     auto iterator = m_chains.find(context);
 
     if (iterator == m_chains.end()) {
@@ -58,6 +59,7 @@ namespace be {
 
       for (std::size_t i = 0; i < d.size() - m_order; ++i) {
         const std::string key = d.substr(i, m_order);
+        assert(i + m_order < d.size());
         m_observations[key].push_back(d[i + m_order]);
       }
     }
@@ -177,7 +179,7 @@ namespace be {
   {
   }
 
-  std::optional<std::string> NamegenManager::generateSingle(gf::Random& random, const NamegenSettings& settings)
+  std::optional<std::string> NamegenManager::generateSingle(gf::Random& random, const NamegenSettings& settings) const
   {
     std::string name = m_generator.generate(random);
     name.erase(std::remove(name.begin(), name.end(), Sentinel), name.end());
@@ -189,7 +191,7 @@ namespace be {
     return std::nullopt;
   }
 
-  std::vector<std::string> NamegenManager::generateMultiple(gf::Random& random, std::size_t count, gf::Time maxTimePerName, const NamegenSettings& settings)
+  std::vector<std::string> NamegenManager::generateMultiple(gf::Random& random, std::size_t count, gf::Time maxTimePerName, const NamegenSettings& settings) const
   {
     std::vector<std::string> names;
     gf::Clock clock;

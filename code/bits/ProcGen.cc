@@ -258,6 +258,10 @@ namespace be {
 
     std::array<CityState, CityCount> computeCities(gf::Array2D<RawCell>& raw, gf::Random& random, gf::ResourceManager& resources)
     {
+      /*
+       * Origin: https://www.data.gouv.fr/fr/datasets/villes-de-france/#/resources
+       * Sanitized to have unique names without numeric suffixes (PLM)
+       */
       std::filesystem::path filename = resources.getAbsolutePath("cities.txt");
       std::ifstream file(filename);
 
