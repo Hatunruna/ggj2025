@@ -44,6 +44,7 @@ namespace be {
     enum class RawCell {
       Ground,
       Block,
+      Gate,
     };
 
     gf::Array2D<RawCell> generateRawMap(gf::Random& random)
@@ -104,7 +105,7 @@ namespace be {
         queue.pop();
         ++count;
 
-        assert(raw(current) == RawCell::Ground);
+        assert(raw(current) == RawCell::Ground || raw(current) == RawCell::Gate);
         assert(zones(current) == zone);
 
         for (auto neighbor : raw.get4NeighborsRange(current)) {
@@ -189,18 +190,24 @@ namespace be {
     {
       HeroState state = {};
 
-      for (;;) {
-        const gf::Vector2i position = random.computePosition(gf::RectI::fromSize(raw.getSize() - 1));
-
-        if (!isLargeGround(raw, position)) {
-          continue;
+      std::vector<gf::Vector2i> gates;
+      for (const auto& position: raw.getPositionRange()) {
+        if (raw(position) == RawCell::Gate) {
+          gates.push_back(position);
         }
-
-        state.location = (position + 0.5f) * TileSize;
-        break;
       }
 
-      return state;
+      const auto gate = gates[random.computeUniformInteger(0LU, gates.size() - 1)];
+      for (const auto position: raw.get8NeighborsRange(gate)) {
+        if (raw(position) == RawCell::Ground) {
+          state.location = (position + 0.5f) * TileSize;
+          return state;
+        }
+      }
+
+      gf::Log::warning("No valid start position...\n");
+      // No valid start position found, try again
+      return computeHero(raw, random);
     }
 
     bool isFarFromProducers(const std::vector<BubbleProducerState>& producers, gf::Vector2f location, float minDistance)
@@ -315,9 +322,14 @@ namespace be {
         }
 
         // Set gates
-        cities[i].gates[0] = ((positions[i] + gf::vec(-CityRadius, 0)) + 0.5f) * TileSize; // West
-        cities[i].gates[1] = ((positions[i] + gf::vec(0,  CityRadius)) + 0.5f) * TileSize; // South
-        cities[i].gates[2] = ((positions[i] + gf::vec( CityRadius, 0)) + 0.5f) * TileSize; // East
+        auto setGate = [&](const auto& position, int gateIndex) -> void {
+          raw(position) = RawCell::Gate;
+          cities[i].gates[0] = (position + 0.5f) * TileSize; // West
+        };
+
+        setGate(positions[i] + gf::vec(-CityRadius, 0), 0); // West
+        setGate(positions[i] + gf::vec(0,  CityRadius), 1); // South
+        setGate(positions[i] + gf::vec( CityRadius, 0), 0); // East
       }
 
       return cities;

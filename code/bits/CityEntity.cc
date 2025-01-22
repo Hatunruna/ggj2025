@@ -27,6 +27,7 @@ namespace be {
 
       for (const auto& gatePosition: city.gates) {
         gf::RectangleShape gate(TileSize);
+        gate.setAnchor(gf::Anchor::Center);
         gate.setPosition(gatePosition);
         gate.setColor(gf::Color::Cyan);
         target.draw(gate, states);
