@@ -324,12 +324,12 @@ namespace be {
         // Set gates
         auto setGate = [&](const auto& position, int gateIndex) -> void {
           raw(position) = RawCell::Gate;
-          cities[i].gates[0] = (position + 0.5f) * TileSize; // West
+          cities[i].gates[gateIndex] = (position + 0.5f) * TileSize; // West
         };
 
         setGate(positions[i] + gf::vec(-CityRadius, 0), 0); // West
         setGate(positions[i] + gf::vec(0,  CityRadius), 1); // South
-        setGate(positions[i] + gf::vec( CityRadius, 0), 0); // East
+        setGate(positions[i] + gf::vec( CityRadius, 0), 2); // East
       }
 
       return cities;
