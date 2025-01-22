@@ -313,6 +313,11 @@ namespace be {
         for (auto point : points) {
           raw(point) = RawCell::Block;
         }
+
+        // Set gates
+        cities[i].gates[0] = ((positions[i] + gf::vec(-CityRadius, 0)) + 0.5f) * TileSize; // West
+        cities[i].gates[1] = ((positions[i] + gf::vec(0,  CityRadius)) + 0.5f) * TileSize; // South
+        cities[i].gates[2] = ((positions[i] + gf::vec( CityRadius, 0)) + 0.5f) * TileSize; // East
       }
 
       return cities;
