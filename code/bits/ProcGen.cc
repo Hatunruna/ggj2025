@@ -197,17 +197,19 @@ namespace be {
         }
       }
 
-      const auto gate = gates[random.computeUniformInteger(0LU, gates.size() - 1)];
-      for (const auto position: raw.get8NeighborsRange(gate)) {
-        if (raw(position) == RawCell::Ground) {
-          state.location = (position + 0.5f) * TileSize;
-          return state;
+      bool validStartPoint = false;
+      while (!validStartPoint) {
+        const auto gate = gates[random.computeUniformInteger(0LU, gates.size() - 1)];
+        for (const auto position: raw.get8NeighborsRange(gate)) {
+          if (raw(position) == RawCell::Ground) {
+            state.location = (position + 0.5f) * TileSize;
+            validStartPoint = true;
+            break;
+          }
         }
       }
 
-      gf::Log::warning("No valid start position...\n");
-      // No valid start position found, try again
-      return computeHero(raw, random);
+      return state;
     }
 
     bool isFarFromProducers(const std::vector<BubbleProducerState>& producers, gf::Vector2f location, float minDistance)
