@@ -10,8 +10,10 @@
 
 #include <gf/Log.h>
 #include <gf/VectorOps.h>
+#include <utility>
 
 #include "CityState.h"
+#include "ContractState.h"
 #include "HeroState.h"
 #include "MapSettings.h"
 #include "MapState.h"
@@ -186,30 +188,27 @@ namespace be {
       return map;
     }
 
-    HeroState computeHero(const gf::Array2D<RawCell>& raw, gf::Random& random)
+    std::pair<ContractState, HeroState> computeStartPoint(const gf::Array2D<RawCell>& raw, const std::array<CityState, CityCount>& cities, gf::Random& random)
     {
-      HeroState state = {};
+      ContractState contract = {};
+      HeroState hero = {};
 
-      std::vector<gf::Vector2i> gates;
-      for (const auto& position: raw.getPositionRange()) {
-        if (raw(position) == RawCell::Gate) {
-          gates.push_back(position);
-        }
-      }
+      for (;;) {
+        contract.originCity = random.computeUniformInteger(0LU, CityCount - 1);
 
-      bool validStartPoint = false;
-      while (!validStartPoint) {
-        const auto gate = gates[random.computeUniformInteger(0LU, gates.size() - 1)];
-        for (const auto position: raw.get8NeighborsRange(gate)) {
+        for (const auto& gateWorldPosition: cities[contract.originCity].gates) {
+          const gf::Vector2i gateTilePosition = gateWorldPosition / TileSize;
+          assert(raw(gateTilePosition) == RawCell::Gate);
+
+          for (const auto position: raw.get8NeighborsRange(gateTilePosition)) {
           if (raw(position) == RawCell::Ground) {
-            state.location = (position + 0.5f) * TileSize;
-            validStartPoint = true;
-            break;
+              gf::Log::debug("Origin City: %s\n", cities[contract.originCity].name.c_str());
+              hero.location = (position + 0.5f) * TileSize;
+              return std::make_pair(contract, hero);
+            }
           }
         }
       }
-
-      return state;
     }
 
     bool isFarFromProducers(const std::vector<BubbleProducerState>& producers, gf::Vector2f location, float minDistance)
@@ -352,8 +351,8 @@ namespace be {
 
     gf::Log::debug("Transform raw map\n");
     state.map.cells = transformRawMap(raw, random);
-    gf::Log::debug("Compute hero\n");
-    state.hero = computeHero(raw, random);
+    gf::Log::debug("Compute start point\n");
+    std::tie(state.contract, state.hero) = computeStartPoint(raw, state.cities, random);
     gf::Log::debug("Compute producers\n");
     state.producers = computeProducers(raw, random);
 

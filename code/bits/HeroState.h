@@ -14,11 +14,12 @@ namespace be {
     cpBody* control = nullptr;
     cpBody* body = nullptr;
     gf::Vector2f location;
+    int64_t money = 0;
   };
 
   template<typename Archive>
   Archive& operator|(Archive& ar, HeroState& state) {
-    return ar | state.location;
+    return ar | state.location | state.money;
   }
 
 }

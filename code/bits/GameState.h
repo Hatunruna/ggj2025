@@ -11,6 +11,7 @@
 
 #include "BubbleState.h"
 #include "CityState.h"
+#include "ContractState.h"
 #include "HeroState.h"
 #include "MapState.h"
 #include "PhysicsModel.h"
@@ -27,6 +28,7 @@ namespace be {
     std::vector<BubbleProducerState> producers;
     std::vector<BubbleState> bubbles;
     std::array<CityState, CityCount> cities;
+    ContractState contract;
 
     void initializePhysics();
 
@@ -41,7 +43,7 @@ namespace be {
 
   template<typename Archive>
   Archive& operator|(Archive& ar, GameState& state) {
-    return ar | state.map | state.hero | state.producers | state.bubbles | state.cities;
+    return ar | state.map | state.hero | state.producers | state.bubbles | state.cities | state.contract;
   }
 
 }
