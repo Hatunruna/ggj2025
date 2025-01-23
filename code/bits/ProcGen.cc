@@ -194,7 +194,7 @@ namespace be {
       HeroState hero = {};
 
       for (;;) {
-        contract.originCity = random.computeUniformInteger(0LU, CityCount - 1);
+        contract.originCity = random.computeUniformInteger(std::size_t(0), CityCount - 1);
 
         for (const auto& gateWorldPosition: cities[contract.originCity].gates) {
           const gf::Vector2i gateTilePosition = gateWorldPosition / TileSize;
