@@ -10,6 +10,7 @@ namespace be {
   : GameManager("Bubble Express", { be::GameDataDirectory })
   , state(generateNewGame(random, resources))
   , start(*this)
+  , contract(*this)
   , world(*this)
   {
     pushScene(start);

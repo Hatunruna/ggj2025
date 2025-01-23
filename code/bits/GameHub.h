@@ -5,6 +5,7 @@
 
 #include "GameData.h"
 #include "GameState.h"
+#include "ContractScene.h"
 #include "StartScene.h"
 #include "WorldScene.h"
 
@@ -17,6 +18,7 @@ namespace be {
     GameState state;
 
     StartScene start;
+    ContractScene contract;
     WorldScene world;
   };
 

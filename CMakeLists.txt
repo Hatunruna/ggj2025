@@ -51,6 +51,7 @@ add_executable(${GAME}
   code/bits/BubbleState.cc
   code/bits/CityEntity.cc
   code/bits/CityState.cc
+  code/bits/ContractScene.cc
   code/bits/ContractState.cc
   code/bits/GameData.cc
   code/bits/GameHub.cc
