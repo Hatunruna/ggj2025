@@ -198,13 +198,13 @@ namespace be {
 
         for (const auto& gateWorldPosition: cities[contract.originCity].gates) {
           const gf::Vector2i gateTilePosition = gateWorldPosition / TileSize;
-          assert(raw(gateTilePosition) == RawCell::Gate);
-
-          for (const auto position: raw.get8NeighborsRange(gateTilePosition)) {
-          if (raw(position) == RawCell::Ground) {
-              gf::Log::debug("Origin City: %s\n", cities[contract.originCity].name.c_str());
-              hero.location = (position + 0.5f) * TileSize;
-              return std::make_pair(contract, hero);
+          if (raw(gateTilePosition) == RawCell::Gate) {
+            for (const auto position: raw.get8NeighborsRange(gateTilePosition)) {
+            if (raw(position) == RawCell::Ground) {
+                gf::Log::debug("Origin City: %s\n", cities[contract.originCity].name.c_str());
+                hero.location = (position + 0.5f) * TileSize;
+                return std::make_pair(contract, hero);
+              }
             }
           }
         }
