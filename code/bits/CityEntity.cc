@@ -26,13 +26,18 @@ namespace be {
     gf::Sprite sprite(m_texture);
     sprite.setAnchor(gf::Anchor::Center);
 
-    for (auto& city : m_state.cities) {
+    for (int i = 0; i < m_state.cities.size(); ++i) {
+      const auto& city = m_state.cities[i];
       // sprite.setPosition(city.location);
       // target.draw(sprite, states);
 
       gf::Text name(city.name, m_font, coords.getRelativeCharacterSize(0.05f));
       name.setAnchor(gf::Anchor::Center);
-      name.setColor(gf::Color::White);
+      if (m_state.contract.targetCity == i) {
+        name.setColor(gf::Color::Red);
+      } else {
+        name.setColor(gf::Color::White);
+      }
       name.setPosition(city.location);
       target.draw(name, states);
 
