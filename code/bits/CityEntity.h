@@ -2,6 +2,7 @@
 #define BE_CITY_ENTITY_H
 
 #include <gf/Entity.h>
+#include <gf/Font.h>
 #include <gf/Texture.h>
 
 namespace be {
@@ -17,6 +18,7 @@ namespace be {
   private:
     GameState& m_state;
     const gf::Texture& m_texture;
+    gf::Font& m_font;
   };
 
 }
