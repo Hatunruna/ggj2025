@@ -38,7 +38,6 @@ namespace be {
     }
 
     if (m_startAction.isActive()) {
-      m_game.contract.updateContracts();
       m_game.replaceScene(m_game.contract); // , m_game.blackout, gf::seconds(TransitionDelay));
     }
   }
