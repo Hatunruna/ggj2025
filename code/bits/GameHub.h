@@ -6,6 +6,7 @@
 #include "GameData.h"
 #include "GameState.h"
 #include "ContractScene.h"
+#include "LoreScene.h"
 #include "StartScene.h"
 #include "WorldScene.h"
 
@@ -18,6 +19,7 @@ namespace be {
     GameState state;
 
     StartScene start;
+    LoreScene lore;
     ContractScene contract;
     WorldScene world;
   };

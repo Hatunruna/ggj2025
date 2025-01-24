@@ -16,7 +16,6 @@
 - generation
   - make ground always at least 2-3 tile lage
 - physics
-  - remove the last bubble
   - make bubble more stable
   - performance: look at spatial hash: https://chipmunk-physics.net/release/ChipmunkLatest-Docs/#cpSpace-SpatialHash
 - minimap
