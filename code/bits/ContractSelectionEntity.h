@@ -1,5 +1,5 @@
-#ifndef BE_CONTRACT_SELECTION_H
-#define BE_CONTRACT_SELECTION_H
+#ifndef BE_CONTRACT_SELECTION_ENTITY_H
+#define BE_CONTRACT_SELECTION_ENTITY_H
 
 #include "gf/Vector.h"
 #include <gf/Entity.h>
@@ -33,4 +33,4 @@ namespace be {
 
 }
 
-#endif // BE_CONTRACT_SELECTION_H
+#endif // BE_CONTRACT_SELECTION_ENTITY_H
