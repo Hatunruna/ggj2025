@@ -33,6 +33,7 @@ namespace be {
     void initializePhysics();
 
     void moveHero(gf::Vector2i direction);
+    void teleportHero(gf::Vector2f position);
     void tryToTakeBubble();
     bool tryToEnterCity();
 

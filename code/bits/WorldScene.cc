@@ -72,6 +72,12 @@ namespace be {
   void WorldScene::doProcessEvent(gf::Event& event)
   {
     m_adaptor.processEvent(event);
+
+    if (event.type == gf::EventType::MouseButtonReleased) {
+      if (event.mouseButton.button == gf::MouseButton::Middle) {
+        m_game.state.teleportHero(m_game.computeWindowToGameCoordinates(event.mouseButton.coords, getWorldView()));
+      }
+    }
   }
 
   void WorldScene::doHandleActions([[maybe_unused]] gf::Window& window)

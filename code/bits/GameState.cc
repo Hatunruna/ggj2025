@@ -202,6 +202,13 @@ namespace be {
     }
   }
 
+  void GameState::teleportHero(gf::Vector2f position)
+  {
+    cpBodySetPosition(hero.body, cpv(position.x, position.y));
+    cpBodySetPosition(hero.control, cpv(position.x, position.y));
+    cpBodySetVelocity(hero.control, cpvzero);
+  }
+
   void GameState::tryToTakeBubble()
   {
     cpSpace* space = physics.getSpace();
