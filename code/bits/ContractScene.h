@@ -4,6 +4,7 @@
 #include <gf/Scene.h>
 
 #include "ContractSelectionEntity.h"
+#include "HeroReportEntity.h"
 
 namespace be {
   struct GameHub;
@@ -23,6 +24,7 @@ namespace be {
 
     gf::Action m_triggerAction;
 
+    HeroReportEntity m_report;
     ContractSelectionEntity m_selection;
   };
 

@@ -8,6 +8,7 @@ namespace be {
   : gf::Scene(game.getRenderer().getSize())
   , m_game(game)
   , m_triggerAction("TriggerAction")
+  , m_report(game)
   , m_selection(game)
   {
     setClearColor(gf::Color::Black);
@@ -15,6 +16,7 @@ namespace be {
     m_triggerAction.addMouseButtonControl(gf::MouseButton::Left);
     addAction(m_triggerAction);
 
+    addHudEntity(m_report);
     addHudEntity(m_selection);
   }
 

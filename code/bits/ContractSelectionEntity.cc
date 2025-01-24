@@ -51,7 +51,6 @@ namespace be {
         m_game.state.contract.targetCity = 1;
       }
 
-
       assert(m_game.state.contract.targetCity >= 0 && m_game.state.contract.targetCity < CityCount);
       assert(m_choice2.getString() == m_game.state.cities[m_game.state.contract.targetCity].name);
 
@@ -67,7 +66,6 @@ namespace be {
       } else {
         m_game.state.contract.targetCity = 2;
       }
-
 
       assert(m_game.state.contract.targetCity >= 0 && m_game.state.contract.targetCity < CityCount);
       assert(m_choice3.getString() == m_game.state.cities[m_game.state.contract.targetCity].name);
@@ -115,12 +113,6 @@ namespace be {
     constexpr gf::Vector2f ButtonStartPoint = gf::vec(0.75f, 0.25f);
     constexpr float spaceBetweenButton = 0.10f;
     constexpr gf::Vector2f backgroundSize(0.35f, 0.40f);
-
-    gf::Text currentCity("You are at " + m_game.state.cities[m_game.state.contract.originCity].name, m_font, relativeCharacterSize * 0.90);
-    currentCity.setAnchor(gf::Anchor::Center);
-    currentCity.setColor(gf::Color::White);
-    currentCity.setPosition(coords.getRelativePoint(gf::vec(0.25f, ButtonStartPoint.y)));
-    target.draw(currentCity, states);
 
     const float paragraphWidth = coords.getRelativeSize(backgroundSize - 0.05f).x;
     const float paddingSize = coords.getRelativeSize({0.01f, 0.f}).x;

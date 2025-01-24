@@ -58,6 +58,7 @@ add_executable(${GAME}
   code/bits/GameHub.cc
   code/bits/GameState.cc
   code/bits/HeroEntity.cc
+  code/bits/HeroReportEntity.cc
   code/bits/HeroState.cc
   code/bits/MapEntity.cc
   code/bits/MapSettings.cc
