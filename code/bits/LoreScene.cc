@@ -25,6 +25,7 @@ namespace be {
 
   void LoreScene::startLoad()
   {
+    m_clock.restart();
     m_result = std::async(std::launch::async, [&]() {
       m_game.state = generateNewGame(m_game.random, m_game.resources);
     });
@@ -34,6 +35,8 @@ namespace be {
   {
     if (m_result.valid() && m_result.wait_for(std::chrono::seconds::zero()) == std::future_status::ready) {
       m_result.get();
+      auto time = m_clock.getElapsedTime();
+      gf::Log::debug("Async load in %i ms\n", time.asMilliseconds());
       return true;
     }
 

@@ -1,6 +1,7 @@
 #ifndef BE_LORE_SCENE_H
 #define BE_LORE_SCENE_H
 
+#include <gf/Clock.h>
 #include <gf/Scene.h>
 
 #include <future>
@@ -27,6 +28,7 @@ namespace be {
 
     gf::Action m_nextAction;
 
+    gf::Clock m_clock;
     bool m_generation_finished = false;
     std::future<void> m_result;
 

@@ -180,7 +180,7 @@ namespace be {
       }
 
       for (gf::Vector2i position : map.getPositionRange()) {
-        if (position.y > 0 && map(position).type == CellType::Block && map({ position.x, position.y - 1 }).type == CellType::Ground) {
+        if (position.y > 0 && map(position).type == CellType::Block && map({ position.x, position.y + 1 }).type == CellType::Ground) {
           map(position).type = CellType::Cliff;
         }
       }
