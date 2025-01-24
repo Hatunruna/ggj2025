@@ -1,5 +1,6 @@
 #include "GameState.h"
-#include "MapSettings.h"
+
+#include "chipmunk/chipmunk.h"
 
 #include <gf/Log.h>
 #include <gf/Geometry.h>
@@ -8,6 +9,8 @@
 #include <gf/SerializationOps.h>
 #include <gf/Streams.h>
 #include <gf/VectorOps.h>
+
+#include "MapSettings.h"
 
 namespace be {
 
@@ -244,6 +247,43 @@ namespace be {
       producer.status = BubbleProducerStatus::Emerging;
       return;
     }
+
+
+    auto iterator = std::find_if(free_bubbles.begin(), free_bubbles.end(), [&](const BubbleState& bubble) {
+      gf::Vector2f location = toVec(cpBodyGetPosition(bubble.body));
+      return gf::squareDistance(location, hero.location) <= gf::square(1.25f * (bubble.size * BubbleRadius + HeroRadius));
+    });
+
+    if (iterator != free_bubbles.end()) {
+      gf::Log::debug("Old bubble taken!\n");
+
+      BubbleState bubble = *iterator;
+      free_bubbles.erase(iterator);
+
+      bubble.pin = cpSlideJointNew(hero.body, bubble.body, cpvzero, cpvzero, (HeroRadius + bubble.size * BubbleRadius), (HeroRadius + bubble.size * BubbleRadius) * BubbleRelaxation);
+      cpSpaceAddConstraint(space, bubble.pin);
+
+      bubbles.push_back(bubble);
+      return;
+    }
+  }
+
+  void GameState::releaseBubble()
+  {
+    if (bubbles.empty()) {
+      return;
+    }
+
+    cpSpace* space = physics.getSpace();
+
+    BubbleState bubble = bubbles.back();
+    bubbles.pop_back();
+
+    cpSpaceRemoveConstraint(space, bubble.pin);
+    cpConstraintFree(bubble.pin);
+    bubble.pin = nullptr;
+
+    free_bubbles.push_back(bubble);
   }
 
   bool GameState::tryToEnterCity()

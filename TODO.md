@@ -14,6 +14,7 @@
 ## Code
 
 - generation
+  - make ground always at least 2-3 tile lage
 - physics
   - remove the last bubble
   - make bubble more stable

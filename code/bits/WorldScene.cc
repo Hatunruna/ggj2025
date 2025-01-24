@@ -13,6 +13,7 @@ namespace be {
   , m_downAction("down")
   , m_rightAction("right")
   , m_takeAction("take")
+  , m_releaseAction("release")
   , m_debugAction("debug")
   , m_mapEntity(game)
   , m_heroEntity(game)
@@ -52,6 +53,10 @@ namespace be {
     m_takeAction.addScancodeKeyControl(gf::Scancode::Space);
     m_takeAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::A);
     addAction(m_takeAction);
+
+    m_releaseAction.addScancodeKeyControl(gf::Scancode::Delete);
+    m_releaseAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::B);
+    addAction(m_releaseAction);
 
     m_debugAction.addScancodeKeyControl(gf::Scancode::F12);
     addAction(m_debugAction);
@@ -104,6 +109,10 @@ namespace be {
       } else {
         m_game.state.tryToTakeBubble();
       }
+    }
+
+    if (m_releaseAction.isActive()) {
+      m_game.state.releaseBubble();
     }
 
     if (m_debugAction.isActive()) {

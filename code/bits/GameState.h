@@ -27,6 +27,7 @@ namespace be {
     HeroState hero;
     std::vector<BubbleProducerState> producers;
     std::vector<BubbleState> bubbles;
+    std::vector<BubbleState> free_bubbles;
     std::array<CityState, CityCount> cities;
     ContractState contract;
 
@@ -35,6 +36,7 @@ namespace be {
     void moveHero(gf::Vector2i direction);
     void teleportHero(gf::Vector2f position);
     void tryToTakeBubble();
+    void releaseBubble();
     bool tryToEnterCity();
 
     void update(gf::Time time);

@@ -41,6 +41,14 @@ namespace be {
       target.draw(bubbleSprite, states);
     }
 
+    for (auto& bubble : m_state.free_bubbles) {
+      cpVect location = cpBodyGetPosition(bubble.body);
+
+      bubbleSprite.setPosition(gf::vec(location.x, location.y));
+      bubbleSprite.setScale(bubble.size);
+      target.draw(bubbleSprite, states);
+    }
+
   }
 
 }
