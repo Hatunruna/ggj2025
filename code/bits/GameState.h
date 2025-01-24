@@ -34,6 +34,7 @@ namespace be {
 
     void moveHero(gf::Vector2i direction);
     void tryToTakeBubble();
+    bool tryToEnterCity();
 
     void update(gf::Time time);
 

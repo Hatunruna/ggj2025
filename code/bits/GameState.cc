@@ -16,6 +16,7 @@ namespace be {
     constexpr cpFloat HeroRadius = 32.0;
 
     constexpr cpFloat ProducerRadius = 32.0;
+    constexpr cpFloat GateRadius = 32.0;
 
     constexpr cpFloat MapRadius = 0.1;
 
@@ -24,6 +25,7 @@ namespace be {
     constexpr cpFloat BubbleRelaxation = 1.5;
 
     constexpr float ProducerDistance = HeroRadius + ProducerRadius + 50.0f;
+    constexpr float GateDistance = HeroRadius + GateRadius + 50.0f;
 
     gf::Vector2f toVec(cpVect raw) {
       return gf::vec(raw.x, raw.y);
@@ -233,7 +235,28 @@ namespace be {
       bubbles.push_back(bubble);
 
       producer.status = BubbleProducerStatus::Emerging;
+      return;
     }
+  }
+
+  bool GameState::tryToEnterCity()
+  {
+    cpSpace* space = physics.getSpace();
+
+    const auto& city = cities[contract.targetCity];
+    for (const auto& gate: city.gates) {
+      if (gf::squareDistance(gate, hero.location) > gf::square(ProducerDistance)) {
+        continue;
+      }
+
+      contract.originCity = contract.targetCity;
+      contract.targetCity = -1;
+
+      gf::Log::debug("Entering the city\n");
+      return true;
+    }
+
+    return false;
   }
 
   void GameState::update(gf::Time time)

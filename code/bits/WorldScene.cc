@@ -93,7 +93,11 @@ namespace be {
     m_game.state.moveHero(direction);
 
     if (m_takeAction.isActive()) {
-      m_game.state.tryToTakeBubble();
+      if (m_game.state.tryToEnterCity()) {
+        m_game.replaceAllScenes(m_game.contract);
+      } else {
+        m_game.state.tryToTakeBubble();
+      }
     }
 
     if (m_debugAction.isActive()) {
