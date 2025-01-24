@@ -12,6 +12,12 @@ namespace be {
   , m_texture(game.resources.getTexture("tileset.png"))
   , m_tiled(gf::TileLayer::createOrthogonal(MapSize, TileSize))
   {
+  }
+
+  void MapEntity::updateTiles()
+  {
+    m_tiled.clear();
+
     auto tilesetId = m_tiled.createTilesetId();
     auto& tileset = m_tiled.getTileset(tilesetId);
 

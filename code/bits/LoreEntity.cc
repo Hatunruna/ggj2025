@@ -43,7 +43,7 @@ namespace be {
     text.setAlignment(gf::Alignment::Justify);
     text.setAnchor(gf::Anchor::Center);
     text.setColor(gf::Color::White);
-    text.setPosition(coords.getCenter());
+    text.setPosition(coords.getRelativePoint({ 0.5f, 0.45f }));
     target.draw(text, states);
   }
 

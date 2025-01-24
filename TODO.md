@@ -15,6 +15,7 @@
 
 - generation
   - make ground always at least 2-3 tile lage
+  - roads between cities
 - physics
   - make bubble more stable
   - performance: look at spatial hash: https://chipmunk-physics.net/release/ChipmunkLatest-Docs/#cpSpace-SpatialHash
@@ -24,5 +25,3 @@
 - compass
 - contracts
 - end of game
-- start scene
-  - create world asynchronously

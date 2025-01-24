@@ -8,7 +8,6 @@ namespace be {
 
   GameHub::GameHub()
   : GameManager("Bubble Express", { be::GameDataDirectory })
-  , state(generateNewGame(random, resources))
   , start(*this)
   , lore(*this)
   , contract(*this)

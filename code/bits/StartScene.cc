@@ -38,6 +38,7 @@ namespace be {
     }
 
     if (m_startAction.isActive()) {
+      m_game.lore.startLoad();
       m_game.replaceScene(m_game.lore); // , m_game.blackout, gf::seconds(TransitionDelay));
     }
   }

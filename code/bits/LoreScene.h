@@ -3,6 +3,9 @@
 
 #include <gf/Scene.h>
 
+#include <future>
+
+#include "LoreEndEntity.h"
 #include "LoreEntity.h"
 
 namespace be {
@@ -12,15 +15,23 @@ namespace be {
   public:
     LoreScene(GameHub& game);
 
+    void startLoad();
+    bool isLoaded();
+
   private:
     void doHandleActions(gf::Window& window) override;
+    void doUpdate(gf::Time time) override;
 
 
     GameHub& m_game;
 
     gf::Action m_nextAction;
 
+    bool m_generation_finished = false;
+    std::future<void> m_result;
+
     LoreEntity m_loreEntity;
+    LoreEndEntity m_loreEndEntity;
   };
 
 }

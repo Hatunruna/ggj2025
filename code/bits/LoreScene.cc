@@ -1,6 +1,9 @@
 #include "LoreScene.h"
 
+#include <gf/Log.h>
+
 #include "GameHub.h"
+#include "ProcGen.h"
 
 namespace be {
 
@@ -9,6 +12,7 @@ namespace be {
   , m_game(game)
   , m_nextAction("next")
   , m_loreEntity(game)
+  , m_loreEndEntity(game)
   {
     setClearColor(gf::Color::Black);
 
@@ -19,9 +23,34 @@ namespace be {
     addHudEntity(m_loreEntity);
   }
 
-  void LoreScene::doHandleActions(gf::Window& window)
+  void LoreScene::startLoad()
   {
-    if (m_nextAction.isActive()) {
+    m_result = std::async(std::launch::async, [&]() {
+      m_game.state = generateNewGame(m_game.random, m_game.resources);
+    });
+  }
+
+  bool LoreScene::isLoaded()
+  {
+    if (m_result.valid() && m_result.wait_for(std::chrono::seconds::zero()) == std::future_status::ready) {
+      m_result.get();
+      return true;
+    }
+
+    return false;
+  }
+
+  void LoreScene::doUpdate([[maybe_unused]] gf::Time time)
+  {
+    if (!m_generation_finished && isLoaded()) {
+      m_generation_finished = true;
+      addHudEntity(m_loreEndEntity);
+    }
+  }
+
+  void LoreScene::doHandleActions([[maybe_unused]] gf::Window& window)
+  {
+    if (m_generation_finished && m_nextAction.isActive()) {
       m_game.replaceAllScenes(m_game.contract);
     }
   }

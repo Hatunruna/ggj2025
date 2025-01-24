@@ -127,4 +127,10 @@ namespace be {
     renderWorldEntities(target, states);
     renderHudEntities(target, states);
   }
+
+  void WorldScene::doShow()
+  {
+    m_mapEntity.updateTiles();
+  }
+
 }

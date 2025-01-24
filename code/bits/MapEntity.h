@@ -15,6 +15,8 @@ namespace be {
 
     void render(gf::RenderTarget &target, const gf::RenderStates &states) override;
 
+    void updateTiles();
+
   private:
     GameState& m_state;
     gf::Texture& m_texture;
