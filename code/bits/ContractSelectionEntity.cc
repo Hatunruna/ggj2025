@@ -22,7 +22,6 @@ namespace be {
       button.setSelectedBackgroundColor(gf::Color::Green);
       button.setDisabledTextColor(gf::Color::Black);
       button.setDisabledBackgroundColor(gf::Color::Red);
-      button.setAnchor(gf::Anchor::TopLeft);
       button.setAlignment(gf::Alignment::Center);
       button.setCallback(callback);
       m_widgets.addWidget(button);
@@ -113,39 +112,42 @@ namespace be {
     constexpr float characterSize = 0.055f;
     const unsigned relativeCharacterSize = coords.getRelativeCharacterSize(characterSize);
 
-    constexpr gf::Vector2f ButtonStartPoint = gf::vec(0.60f, 0.30f);
-    constexpr float spaceBetweenButton = 0.06f;
+    constexpr gf::Vector2f ButtonStartPoint = gf::vec(0.75f, 0.25f);
+    constexpr float spaceBetweenButton = 0.10f;
     constexpr gf::Vector2f backgroundSize(0.35f, 0.40f);
 
     gf::Text currentCity("You are at " + m_game.state.cities[m_game.state.contract.originCity].name, m_font, relativeCharacterSize * 0.90);
-    currentCity.setAnchor(gf::Anchor::BottomLeft);
+    currentCity.setAnchor(gf::Anchor::Center);
     currentCity.setColor(gf::Color::White);
-    currentCity.setPosition(coords.getRelativePoint(gf::vec(0.05f, ButtonStartPoint.y - spaceBetweenButton)));
+    currentCity.setPosition(coords.getRelativePoint(gf::vec(0.25f, ButtonStartPoint.y)));
     target.draw(currentCity, states);
 
     const float paragraphWidth = coords.getRelativeSize(backgroundSize - 0.05f).x;
     const float paddingSize = coords.getRelativeSize({0.01f, 0.f}).x;
 
     gf::Text selectionTitle("Choose your next halt", m_font, relativeCharacterSize * 0.90);
-    selectionTitle.setAnchor(gf::Anchor::BottomLeft);
+    selectionTitle.setAnchor(gf::Anchor::Center);
     selectionTitle.setColor(gf::Color::White);
-    selectionTitle.setPosition(coords.getRelativePoint(ButtonStartPoint + gf::vec(0.0f, - spaceBetweenButton)));
+    selectionTitle.setPosition(coords.getRelativePoint(ButtonStartPoint));
     target.draw(selectionTitle, states);
 
     m_choice1.setCharacterSize(relativeCharacterSize);
-    m_choice1.setPosition(coords.getRelativePoint(ButtonStartPoint));
     m_choice1.setParagraphWidth(paragraphWidth);
     m_choice1.setPadding(paddingSize);
+    m_choice1.setAnchor(gf::Anchor::Center);
+    m_choice1.setPosition(coords.getRelativePoint(ButtonStartPoint + gf::vec(0.0f, (spaceBetweenButton) * 1.0f)));
 
     m_choice2.setCharacterSize(relativeCharacterSize);
-    m_choice2.setPosition(coords.getRelativePoint(ButtonStartPoint + gf::vec(0.0f, (characterSize + spaceBetweenButton) * 1.0f)));
     m_choice2.setParagraphWidth(paragraphWidth);
     m_choice2.setPadding(paddingSize);
+    m_choice2.setAnchor(gf::Anchor::Center);
+    m_choice2.setPosition(coords.getRelativePoint(ButtonStartPoint + gf::vec(0.0f, (spaceBetweenButton) * 2.0f)));
 
     m_choice3.setCharacterSize(relativeCharacterSize);
-    m_choice3.setPosition(coords.getRelativePoint(ButtonStartPoint + gf::vec(0.0f, (characterSize + spaceBetweenButton) * 2.0f)));
     m_choice3.setParagraphWidth(paragraphWidth);
     m_choice3.setPadding(paddingSize);
+    m_choice3.setAnchor(gf::Anchor::Center);
+    m_choice3.setPosition(coords.getRelativePoint(ButtonStartPoint + gf::vec(0.0f, (spaceBetweenButton) * 3.0f)));
 
     m_widgets.render(target, states);
   }
