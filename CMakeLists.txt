@@ -34,9 +34,9 @@ if (WIN32)
   target_compile_options(gfnet0 PRIVATE /wd4251)
 endif ()
 
-if (UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
-endif ()
+# if (UNIX)
+#   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+# endif ()
 
 if (WIN32)
   set(GAME_DATADIR "./data" CACHE STRING "Path to game data")
