@@ -2,6 +2,7 @@
 
 #include <gf/AnimatedSprite.h>
 #include <gf/RenderTarget.h>
+#include <gf/Math.h>
 #include <gf/Sprite.h>
 
 #include "GameHub.h"
@@ -28,7 +29,7 @@ namespace be {
   void HeroEntity::update(gf::Time time) {
     m_state.hero.orientation = gf::Orientation::Center;
     if (!(cpBodyGetVelocity(m_state.hero.control) == cpvzero)) {
-      m_state.hero.orientation = gf::orientation(cpBodyGetAngle(m_state.hero.control)+M_PI);
+      m_state.hero.orientation = gf::orientation(cpBodyGetAngle(m_state.hero.control) + gf::Pi);
     }
 
     switch (m_state.hero.orientation) {
@@ -98,7 +99,7 @@ namespace be {
     animatedSprite.setScale(HeroScale);
     if (m_state.hero.orientation==gf::Orientation::West
       || m_state.hero.orientation==gf::Orientation::SouthWest
-      || m_state.hero.orientation==gf::Orientation::NorthEast) 
+      || m_state.hero.orientation==gf::Orientation::NorthEast)
     {
       animatedSprite.setScale(HeroScale * gf::Vector2f{-1.0f, 1.0f});
     }
