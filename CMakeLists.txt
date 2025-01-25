@@ -92,6 +92,15 @@ target_link_libraries(${GAME}
     ${CHIPMUNK_LIBS}
 )
 
+add_executable(generate-raw-tileset
+  code/generate-raw-tileset.cc
+)
+
+target_link_libraries(generate-raw-tileset
+  PRIVATE
+    gf0
+)
+
 if (WIN32)
   install(
     FILES
