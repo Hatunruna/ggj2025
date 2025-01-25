@@ -224,6 +224,12 @@ namespace be {
         continue;
       }
 
+      if (producer.type != contract.type) {
+        feedback.message = "Wrong bubble type!";
+        feedback.time.restart();
+        return;
+      }
+
       gf::Log::debug("Bubble taken!\n");
 
       BubbleState bubble = {};

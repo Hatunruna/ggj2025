@@ -5,6 +5,8 @@
 
 #include <gf/Log.h>
 
+#include "BubbleState.h"
+#include "CityState.h"
 #include "GameHub.h"
 #include "GameState.h"
 
@@ -81,6 +83,11 @@ namespace be {
       } else {
         nextContract.targetCity = i + 1;
       }
+      int typeIndex = m_game.random.computeUniformInteger(static_cast<size_t>(0), CityCount - 1);
+      if (typeIndex >= nextContract.targetCity) {
+        ++typeIndex;
+      }
+      nextContract.type = static_cast<BubbleType>(typeIndex);
     }
 
     m_selection.updateContracts(m_nextContracts);

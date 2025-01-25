@@ -13,6 +13,7 @@ namespace be {
     int originCity = -1;
     int targetCity = -1;
     int bubbleValueTarget = -1;
+    BubbleType type = BubbleType::None;
   };
 
   template<typename Archive>
