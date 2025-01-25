@@ -28,7 +28,7 @@ namespace be {
     gf::Text currentCity("You are at " + m_state.cities[m_state.contract.targetCity].name, m_font, relativeCharacterSize * 0.90);
     currentCity.setAnchor(gf::Anchor::Center);
     currentCity.setColor(gf::Color::White);
-    currentCity.setPosition(coords.getRelativePoint(gf::vec(0.25f, ButtonStartPoint.y)));
+    currentCity.setPosition(coords.getRelativePoint(gf::vec(0.25f, ButtonStartPoint.y - 0.1)));
     target.draw(currentCity, states);
   }
 

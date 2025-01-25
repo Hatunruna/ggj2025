@@ -27,14 +27,12 @@ namespace be {
     setClearColor(gf::Color::Black);
 
     m_upAction.addScancodeKeyControl(gf::Scancode::Up);
-    m_upAction.addScancodeKeyControl(gf::Scancode::Z);
     m_upAction.addScancodeKeyControl(gf::Scancode::W);
     m_upAction.addGamepadAxisControl(gf::AnyGamepad, gf::GamepadAxis::LeftY, gf::GamepadAxisDirection::Negative);
     m_upAction.setContinuous();
     addAction(m_upAction);
 
     m_leftAction.addScancodeKeyControl(gf::Scancode::Left);
-    m_leftAction.addScancodeKeyControl(gf::Scancode::Q);
     m_leftAction.addScancodeKeyControl(gf::Scancode::A);
     m_leftAction.addGamepadAxisControl(gf::AnyGamepad, gf::GamepadAxis::LeftX, gf::GamepadAxisDirection::Negative);
     m_leftAction.setContinuous();
@@ -56,7 +54,8 @@ namespace be {
     m_takeAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::A);
     addAction(m_takeAction);
 
-    m_releaseAction.addScancodeKeyControl(gf::Scancode::Delete);
+    m_releaseAction.addScancodeKeyControl(gf::Scancode::RightShift);
+    m_releaseAction.addScancodeKeyControl(gf::Scancode::E);
     m_releaseAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::B);
     addAction(m_releaseAction);
 

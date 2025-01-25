@@ -6,6 +6,7 @@
 #include <gf/Log.h>
 #include <gf/StringUtils.h>
 #include <gf/Text.h>
+#include <gf/Sprite.h>
 
 #include "ContractState.h"
 #include "GameHub.h"
@@ -18,6 +19,13 @@ namespace be {
   , m_choice1("Choice 1", m_font)
   , m_choice2("Choice 2", m_font)
   , m_choice3("Choice 3", m_font)
+  , m_text1("Choice1", m_font)
+  , m_text2("Choice2", m_font)
+  , m_text3("Choice3", m_font)
+  , m_redBubble(game.resources.getTexture("redBubble.png"))
+  , m_blueBubble(game.resources.getTexture("blueBubble.png"))
+  , m_greenBubble(game.resources.getTexture("greenBubble.png"))
+  , m_yellowBubble(game.resources.getTexture("yellowBubble.png"))
   {
     auto setupButton = [&] (gf::TextButtonWidget& button, auto callback) {
       button.setDefaultTextColor(gf::Color::Black);
@@ -47,6 +55,31 @@ namespace be {
     });
   }
 
+  gf::Texture& ContractSelectionEntity::getContractBubbleTexture(BubbleType type) {
+    switch (type)
+    {
+    case BubbleType::Red:
+      return m_redBubble;
+      break;
+    
+    case BubbleType::Blue:
+      return m_blueBubble;
+      break;
+    
+    case BubbleType::Green:
+      return m_greenBubble;
+      break;
+    
+    case BubbleType::Yellow:
+      return m_yellowBubble;
+      break;
+    
+    default:
+      assert(false);
+      break;
+    }
+  }
+
   void ContractSelectionEntity::updateContracts(const std::array<ContractState, CityCount - 1>& nextContracts)
   {
     const std::array<gf::TextButtonWidget*, 3> buttons = {
@@ -55,16 +88,22 @@ namespace be {
       &m_choice3,
     };
 
-    assert(buttons.size() == nextContracts.size());
+    const std::array<gf::Text*, 3> texts = {
+      &m_text1,
+      &m_text2,
+      &m_text3,
+    };
 
     for (std::size_t i = 0; i < nextContracts.size(); ++i) {
       const auto& city = m_game.state.cities[nextContracts[i].targetCity];
       const float distance = gf::euclideanDistance(m_game.state.hero.location, city.location);
-      buttons[i]->setString(
+      texts[i]->setString(
         city.name + "\n\n" +
         "distance: " + gf::niceNum(distance, 1.0f) + "\n\n" +
         "value: " + gf::niceNum(nextContracts[i].bubbleValueTarget, 1.0f)
       );
+      m_choicesBubble[i] = &getContractBubbleTexture(nextContracts[i].type);
+      buttons[i]->setString(city.name);
     }
   }
 
@@ -91,26 +130,55 @@ namespace be {
     gf::Text selectionTitle("Choose your next halt", m_font, relativeCharacterSize * 0.90);
     selectionTitle.setAnchor(gf::Anchor::BottomCenter);
     selectionTitle.setColor(gf::Color::White);
-    selectionTitle.setPosition(coords.getRelativePoint({0.50f, 0.36f}));
+    selectionTitle.setPosition(coords.getRelativePoint({0.50f, 0.30f}));
     target.draw(selectionTitle, states);
+
+    m_text1.setCharacterSize(relativeCharacterSize);
+    m_text1.setParagraphWidth(paragraphWidth);
+    m_text1.setAnchor(gf::Anchor::TopCenter);
+    m_text1.setColor(gf::Color::White);
+    m_text1.setPosition(coords.getRelativePoint({0.20f, 0.40f}));
+    target.draw(m_text1,states);
+
+    m_text2.setCharacterSize(relativeCharacterSize);
+    m_text2.setParagraphWidth(paragraphWidth);
+    m_text2.setAnchor(gf::Anchor::TopCenter);
+    m_text2.setColor(gf::Color::White);
+    m_text2.setPosition(coords.getRelativePoint({0.50f, 0.40f}));
+    target.draw(m_text2,states);
+
+    m_text3.setCharacterSize(relativeCharacterSize);
+    m_text3.setParagraphWidth(paragraphWidth);
+    m_text3.setAnchor(gf::Anchor::TopCenter);
+    m_text3.setColor(gf::Color::White);
+    m_text3.setPosition(coords.getRelativePoint({0.80f, 0.40f}));
+    target.draw(m_text3,states);
+
+    for (int i=0; i<3; i++) {
+      gf::Sprite contractBubble(*(m_choicesBubble[i]));
+      contractBubble.setAnchor(gf::Anchor::CenterLeft);
+      contractBubble.setPosition(coords.getRelativePoint({0.225f + 0.3f*i, 0.65f}) - gf::Vector2f{60.0f, 5.0f});
+      contractBubble.scale(0.4f);
+      target.draw(contractBubble, states);
+    }
 
     m_choice1.setCharacterSize(relativeCharacterSize);
     m_choice1.setParagraphWidth(paragraphWidth);
     m_choice1.setPadding(paddingSize);
     m_choice1.setAnchor(gf::Anchor::TopCenter);
-    m_choice1.setPosition(coords.getRelativePoint({0.20f, 0.40f}));
+    m_choice1.setPosition(coords.getRelativePoint({0.20f, 0.75f}));
 
     m_choice2.setCharacterSize(relativeCharacterSize);
     m_choice2.setParagraphWidth(paragraphWidth);
     m_choice2.setPadding(paddingSize);
     m_choice2.setAnchor(gf::Anchor::TopCenter);
-    m_choice2.setPosition(coords.getRelativePoint({0.50f, 0.40f}));
+    m_choice2.setPosition(coords.getRelativePoint({0.50f, 0.75f}));
 
     m_choice3.setCharacterSize(relativeCharacterSize);
     m_choice3.setParagraphWidth(paragraphWidth);
     m_choice3.setPadding(paddingSize);
     m_choice3.setAnchor(gf::Anchor::TopCenter);
-    m_choice3.setPosition(coords.getRelativePoint({0.80f, 0.40f}));
+    m_choice3.setPosition(coords.getRelativePoint({0.80f, 0.75f}));
 
     m_widgets.render(target, states);
   }
