@@ -92,6 +92,27 @@ namespace be {
 
   }
 
+  void attacheBubbleTo(BubbleState& bubble, cpSpace* space, cpBody* body)
+  {
+    bubble.pin = cpSlideJointNew(body, bubble.body, cpvzero, cpvzero, (HeroRadius + bubble.size * BubbleRadius), (HeroRadius + bubble.size * BubbleRadius) * BubbleRelaxation);
+    cpSpaceAddConstraint(space, bubble.pin);
+  }
+
+  void initializeBubblePhysics(BubbleState& bubble, cpSpace* space, cpVect location, cpBody* body)
+  {
+    bubble.body = cpBodyNew(BubbleMass, cpMomentForCircle(BubbleMass, 0.0, bubble.size * BubbleRadius, cpvzero));
+    cpBodySetVelocity(bubble.body, cpvzero);
+    cpBodySetPosition(bubble.body, location);
+    cpSpaceAddBody(space, bubble.body);
+
+    bubble.shape = cpCircleShapeNew(bubble.body, bubble.size * BubbleRadius, cpvzero);
+    cpShapeSetElasticity(bubble.shape, 0.0f);
+    cpShapeSetFriction(bubble.shape, 0.7f);
+    cpSpaceAddShape(space, bubble.shape);
+
+    attacheBubbleTo(bubble, space, body);
+  }
+
   void GameState::initializePhysics()
   {
     cpSpace* space = physics.getSpace();
@@ -175,19 +196,8 @@ namespace be {
      */
 
     for (auto& bubble : bubbles) {
-      bubble.body = cpBodyNew(BubbleMass, cpMomentForCircle(BubbleMass, 0.0, bubble.size * BubbleRadius, cpvzero));
-      cpBodySetVelocity(bubble.body, cpvzero);
-      cpSpaceAddBody(space, bubble.body);
-
-      cpShape* shape = cpCircleShapeNew(bubble.body, bubble.size * BubbleRadius, cpvzero);
-      cpShapeSetElasticity(shape, 0.0f);
-      cpShapeSetFriction(shape, 0.7f);
-      cpSpaceAddShape(space, shape);
-
-      bubble.pin = cpSlideJointNew(hero.body, bubble.body, cpvzero, cpvzero, (HeroRadius + bubble.size * BubbleRadius), (HeroRadius + bubble.size * BubbleRadius) * BubbleRelaxation);
-      cpSpaceAddConstraint(space, bubble.pin);
+      initializeBubblePhysics(bubble, space, cpvzero, hero.body);
     }
-
 
   }
 
@@ -238,26 +248,13 @@ namespace be {
       bubble.type = producer.type;
 
       const gf::Vector2f location = producer.location - gf::diry(bubble.size * BubbleRadius);
-
-      bubble.body = cpBodyNew(BubbleMass, cpMomentForCircle(BubbleMass, 0.0, bubble.size * BubbleRadius, cpvzero));
-      cpBodySetVelocity(bubble.body, cpvzero);
-      cpBodySetPosition(bubble.body, cpv(location.x, location.y));
-      cpSpaceAddBody(space, bubble.body);
-
-      cpShape* shape = cpCircleShapeNew(bubble.body, bubble.size * BubbleRadius, cpvzero);
-      cpShapeSetElasticity(shape, 0.0f);
-      cpShapeSetFriction(shape, 0.7f);
-      cpSpaceAddShape(space, shape);
-
-      bubble.pin = cpSlideJointNew(hero.body, bubble.body, cpvzero, cpvzero, (HeroRadius + bubble.size * BubbleRadius), (HeroRadius + bubble.size * BubbleRadius) * BubbleRelaxation);
-      cpSpaceAddConstraint(space, bubble.pin);
+      initializeBubblePhysics(bubble, space, cpv(location.x, location.y), hero.body);
 
       bubbles.push_back(bubble);
 
       producer.status = BubbleProducerStatus::Emerging;
       return;
     }
-
 
     auto iterator = std::find_if(freeBubbles.begin(), freeBubbles.end(), [&](const BubbleState& bubble) {
       gf::Vector2f location = toVec(cpBodyGetPosition(bubble.body));
@@ -270,8 +267,7 @@ namespace be {
       BubbleState bubble = *iterator;
       freeBubbles.erase(iterator);
 
-      bubble.pin = cpSlideJointNew(hero.body, bubble.body, cpvzero, cpvzero, (HeroRadius + bubble.size * BubbleRadius), (HeroRadius + bubble.size * BubbleRadius) * BubbleRelaxation);
-      cpSpaceAddConstraint(space, bubble.pin);
+      attacheBubbleTo(bubble, space, hero.body);
 
       bubbles.push_back(bubble);
       return;
@@ -304,6 +300,9 @@ namespace be {
       cpSpaceRemoveConstraint(space, bubble.pin);
       cpConstraintFree(bubble.pin);
 
+      cpSpaceRemoveShape(space, bubble.shape);
+      cpShapeFree(bubble.shape);
+
       cpSpaceRemoveBody(space, bubble.body);
       cpBodyFree(bubble.body);
     };
@@ -312,9 +311,13 @@ namespace be {
       deleteBubble(bubble);
     }
 
+    bubbles.clear();
+
     for (auto& bubble : freeBubbles) {
       deleteBubble(bubble);
     }
+
+    freeBubbles.clear();
   }
 
   bool GameState::tryToEnterCity()

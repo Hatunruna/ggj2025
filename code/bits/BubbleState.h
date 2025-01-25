@@ -55,6 +55,7 @@ namespace be {
     float size = 0.0f;
     BubbleType type = BubbleType::None;
     cpBody* body = nullptr;
+    cpShape* shape = nullptr;
     cpConstraint* pin = nullptr;
   };
 

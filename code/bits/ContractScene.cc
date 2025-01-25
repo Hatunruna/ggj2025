@@ -92,5 +92,7 @@ namespace be {
     }
 
     m_selection.updateContracts(m_nextContracts);
+
+    m_game.state.deleteAllBubbles();
   }
 }
