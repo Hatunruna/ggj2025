@@ -1,11 +1,14 @@
 #ifndef BE_CONTRACT_SELECTION_ENTITY_H
 #define BE_CONTRACT_SELECTION_ENTITY_H
 
-#include "gf/Vector.h"
+#include <array>
+
 #include <gf/Entity.h>
+#include <gf/Text.h>
+#include <gf/Texture.h>
+#include <gf/Vector.h>
 #include <gf/WidgetContainer.h>
 #include <gf/Widgets.h>
-#include <gf/Text.h>
 
 #include "CityState.h"
 #include "ContractState.h"
@@ -25,8 +28,6 @@ namespace be {
     void render(gf::RenderTarget &target, const gf::RenderStates &states) override;
 
   private:
-    gf::Texture& getContractBubbleTexture(BubbleType type);
-
     GameHub& m_game;
     gf::Font& m_font;
 
@@ -34,10 +35,7 @@ namespace be {
     gf::Text m_text2;
     gf::Text m_text3;
 
-    gf::Texture& m_redBubble;
-    gf::Texture& m_blueBubble;
-    gf::Texture& m_greenBubble;
-    gf::Texture& m_yellowBubble;
+    std::array<gf::Ref<gf::Texture>, CityCount> m_textures;
     gf::Texture* m_choicesBubble[3];
 
     gf::TextButtonWidget m_choice1;

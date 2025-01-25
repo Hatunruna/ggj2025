@@ -1,6 +1,7 @@
 #include "ContractSelectionEntity.h"
 
 #include <cassert>
+#include <cstdint>
 
 #include <gf/Coordinates.h>
 #include <gf/Log.h>
@@ -22,10 +23,12 @@ namespace be {
   , m_text1("Choice1", m_font)
   , m_text2("Choice2", m_font)
   , m_text3("Choice3", m_font)
-  , m_redBubble(game.resources.getTexture("redBubble.png"))
-  , m_blueBubble(game.resources.getTexture("blueBubble.png"))
-  , m_greenBubble(game.resources.getTexture("greenBubble.png"))
-  , m_yellowBubble(game.resources.getTexture("yellowBubble.png"))
+  , m_textures({
+    game.resources.getTexture("redBubble.png"),
+    game.resources.getTexture("blueBubble.png"),
+    game.resources.getTexture("greenBubble.png"),
+    game.resources.getTexture("yellowBubble.png"),
+  })
   {
     auto setupButton = [&] (gf::TextButtonWidget& button, auto callback) {
       button.setDefaultTextColor(gf::Color::Black);
@@ -55,31 +58,6 @@ namespace be {
     });
   }
 
-  gf::Texture& ContractSelectionEntity::getContractBubbleTexture(BubbleType type) {
-    switch (type)
-    {
-    case BubbleType::Red:
-      return m_redBubble;
-      break;
-    
-    case BubbleType::Blue:
-      return m_blueBubble;
-      break;
-    
-    case BubbleType::Green:
-      return m_greenBubble;
-      break;
-    
-    case BubbleType::Yellow:
-      return m_yellowBubble;
-      break;
-    
-    default:
-      assert(false);
-      break;
-    }
-  }
-
   void ContractSelectionEntity::updateContracts(const std::array<ContractState, CityCount - 1>& nextContracts)
   {
     const std::array<gf::TextButtonWidget*, 3> buttons = {
@@ -102,7 +80,7 @@ namespace be {
         "distance: " + gf::niceNum(distance, 1.0f) + "\n\n" +
         "value: " + gf::niceNum(nextContracts[i].bubbleValueTarget, 1.0f)
       );
-      m_choicesBubble[i] = &getContractBubbleTexture(nextContracts[i].type);
+      m_choicesBubble[i] = &(m_textures[static_cast<uint8_t>(nextContracts[i].type)].get());
       buttons[i]->setString(city.name);
     }
   }
