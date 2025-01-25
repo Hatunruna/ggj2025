@@ -84,10 +84,11 @@ namespace be {
         nextContract.targetCity = i + 1;
       }
       int typeIndex = m_game.random.computeUniformInteger(static_cast<size_t>(0), CityCount - 1);
-      if (typeIndex >= nextContract.targetCity) {
-        ++typeIndex;
+      if (typeIndex == nextContract.targetCity) {
+        typeIndex = (typeIndex + 1) % CityCount;
       }
       nextContract.type = static_cast<BubbleType>(typeIndex);
+      assert(nextContract.type != BubbleType::None);
     }
 
     m_selection.updateContracts(m_nextContracts);
