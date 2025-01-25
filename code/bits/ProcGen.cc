@@ -176,7 +176,11 @@ namespace be {
           map(position).type = CellType::Ground;
         }
 
-        map(position).tile = random.computeUniformInteger(0, 3);
+        if (random.computeBernoulli(0.95)) {
+          map(position).tile = 0;
+        } else {
+          map(position).tile = random.computeUniformInteger(1, 18);
+        }
       }
 
       for (gf::Vector2i position : map.getPositionRange()) {
