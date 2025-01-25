@@ -20,9 +20,6 @@ namespace be {
 
   void BubbleEntity::render(gf::RenderTarget &target, const gf::RenderStates &states)
   {
-    gf::Sprite producerSprite(m_producerTexture, gf::RectF::fromPositionSize({ 0.0f, 0.0f }, { 1.0f / 2.0f, 1.0f / 2.0f }));
-    producerSprite.setAnchor(gf::Anchor::TopCenter);
-
     gf::Sprite bubbleSprite;
 
     auto drawBubble = [&](const gf::Vector2f& position, float size, BubbleType type, gf::Anchor anchor) -> void {
@@ -51,7 +48,10 @@ namespace be {
     };
 
     for (auto& producer : m_state.producers) {
+      gf::Sprite producerSprite(m_producerTexture, gf::RectF::fromPositionSize({ 1.0f / 3.0f * producer.tile, 0.0f }, { 1.0f / 3.0f, 1.0f }));
+      producerSprite.setAnchor(gf::Anchor::TopCenter);
       producerSprite.setPosition(producer.location);
+      producerSprite.setScale(0.4f);
       target.draw(producerSprite, states);
 
       drawBubble(producer.location, producer.size, producer.type, gf::Anchor::BottomCenter);

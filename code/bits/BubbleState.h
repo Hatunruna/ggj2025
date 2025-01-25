@@ -7,6 +7,7 @@
 
 #include <gf/Vector.h>
 #include <gf/VectorOps.h>
+#include <gf/Random.h>
 #include <gf/Time.h>
 
 namespace be {
@@ -44,6 +45,7 @@ namespace be {
     float minSize = 0.0f;
     float maxSize = 0.0f;
     float growthRate = 0.0f;
+    int tile = 0;
   };
 
   template<typename Archive>

@@ -248,6 +248,7 @@ namespace be {
           state.maxSize = BubbleMaxSize;
           state.growthRate = ProducerGrowRate;
           state.size = random.computeUniformFloat(state.minSize, state.maxSize);
+          state.tile = random.computeUniformInteger(0, 2);
 
           producers.push_back(std::move(state));
           break;
