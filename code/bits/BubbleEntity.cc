@@ -40,10 +40,10 @@ namespace be {
         bubbleSprite.setAnimation(m_redBubbleAnimation);
         break;
       case BubbleType::Green:
-        bubbleSprite.setAnimation(m_blueBubbleAnimation);
+        bubbleSprite.setAnimation(m_greenBubbleAnimation);
         break;
       case BubbleType::Blue:
-        bubbleSprite.setAnimation(m_greenBubbleAnimation);
+        bubbleSprite.setAnimation(m_blueBubbleAnimation);
         break;
       case BubbleType::Yellow:
         bubbleSprite.setAnimation(m_yellowBubbleAnimation);
