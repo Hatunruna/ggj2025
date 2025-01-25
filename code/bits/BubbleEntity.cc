@@ -63,7 +63,7 @@ namespace be {
       drawBubble(gf::vec(location.x, location.y), bubble.size, bubble.type, gf::Anchor::Center);
     }
 
-    for (auto& bubble : m_state.free_bubbles) {
+    for (auto& bubble : m_state.freeBubbles) {
       cpVect location = cpBodyGetPosition(bubble.body);
 
       drawBubble(gf::vec(location.x, location.y), bubble.size, bubble.type, gf::Anchor::Center);

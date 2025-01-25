@@ -259,16 +259,16 @@ namespace be {
     }
 
 
-    auto iterator = std::find_if(free_bubbles.begin(), free_bubbles.end(), [&](const BubbleState& bubble) {
+    auto iterator = std::find_if(freeBubbles.begin(), freeBubbles.end(), [&](const BubbleState& bubble) {
       gf::Vector2f location = toVec(cpBodyGetPosition(bubble.body));
       return gf::squareDistance(location, hero.location) <= gf::square(1.25f * (bubble.size * BubbleRadius + HeroRadius));
     });
 
-    if (iterator != free_bubbles.end()) {
+    if (iterator != freeBubbles.end()) {
       gf::Log::debug("Old bubble taken!\n");
 
       BubbleState bubble = *iterator;
-      free_bubbles.erase(iterator);
+      freeBubbles.erase(iterator);
 
       bubble.pin = cpSlideJointNew(hero.body, bubble.body, cpvzero, cpvzero, (HeroRadius + bubble.size * BubbleRadius), (HeroRadius + bubble.size * BubbleRadius) * BubbleRelaxation);
       cpSpaceAddConstraint(space, bubble.pin);
@@ -293,13 +293,32 @@ namespace be {
     cpConstraintFree(bubble.pin);
     bubble.pin = nullptr;
 
-    free_bubbles.push_back(bubble);
+    freeBubbles.push_back(bubble);
+  }
+
+  void GameState::deleteAllBubbles()
+  {
+    cpSpace* space = physics.getSpace();
+
+    auto deleteBubble = [&](BubbleState& bubble) {
+      cpSpaceRemoveConstraint(space, bubble.pin);
+      cpConstraintFree(bubble.pin);
+
+      cpSpaceRemoveBody(space, bubble.body);
+      cpBodyFree(bubble.body);
+    };
+
+    for (auto& bubble : bubbles) {
+      deleteBubble(bubble);
+    }
+
+    for (auto& bubble : freeBubbles) {
+      deleteBubble(bubble);
+    }
   }
 
   bool GameState::tryToEnterCity()
   {
-    cpSpace* space = physics.getSpace();
-
     const auto& city = cities[contract.targetCity];
     for (const auto& gate: city.gates) {
       if (gf::squareDistance(gate, hero.location) > gf::square(ProducerDistance)) {

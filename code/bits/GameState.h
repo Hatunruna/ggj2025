@@ -31,7 +31,7 @@ namespace be {
     HeroState hero;
     std::vector<BubbleProducerState> producers;
     std::vector<BubbleState> bubbles;
-    std::vector<BubbleState> free_bubbles;
+    std::vector<BubbleState> freeBubbles;
     std::array<CityState, CityCount> cities;
     ContractState contract;
     FeedbackState feedback;
@@ -43,6 +43,7 @@ namespace be {
     void teleportHero(gf::Vector2f position);
     void tryToTakeBubble();
     void releaseBubble();
+    void deleteAllBubbles();
     bool tryToEnterCity();
 
     float computeBubblesValues();
