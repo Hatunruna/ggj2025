@@ -226,6 +226,7 @@ namespace be {
       BubbleState bubble = {};
 
       bubble.size = producer.size;
+      bubble.type = producer.type;
 
       const gf::Vector2f location = producer.location - gf::diry(bubble.size * BubbleRadius);
 

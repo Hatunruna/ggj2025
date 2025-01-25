@@ -222,7 +222,7 @@ namespace be {
       return true;
     }
 
-    std::vector<BubbleProducerState> computeProducers(const gf::Array2D<RawCell>& raw, gf::Random& random)
+    std::vector<BubbleProducerState> computeProducers(const gf::Array2D<RawCell>& raw, const std::array<CityState, CityCount>& cities, gf::Random& random)
     {
       std::vector<BubbleProducerState> producers;
 
@@ -251,6 +251,32 @@ namespace be {
           producers.push_back(std::move(state));
           break;
         }
+      }
+
+      // Color producers
+      for (int i = 0; i < CityCount; ++i) {
+        const auto& city = cities[i];
+        BubbleType type = static_cast<BubbleType>(i); // unsafe
+
+        std::sort(producers.begin(), producers.end(), [cityLocation = city.location](const auto& lhs, const auto& rhs) -> bool {
+          return gf::euclideanDistance(lhs.location, cityLocation) < gf::euclideanDistance(rhs.location, cityLocation);
+        });
+
+        assert((ProducerCount % ProducerCount) == 0);
+        constexpr int CityProducerCount = ProducerCount / CityCount;
+
+        int coloredProducer = 0;
+        for (int i = 0; coloredProducer < CityProducerCount; ++i) {
+          if (producers[i].type == BubbleType::None) {
+            producers[i].type = type;
+            ++coloredProducer;
+          }
+        }
+      }
+
+      // Check producers are all colored
+      for (const auto& producer: producers) {
+        assert(producer.type != BubbleType::None);
       }
 
       return producers;
@@ -358,7 +384,7 @@ namespace be {
     gf::Log::debug("Compute start point\n");
     std::tie(state.contract, state.hero) = computeStartPoint(raw, state.cities, random);
     gf::Log::debug("Compute producers\n");
-    state.producers = computeProducers(raw, random);
+    state.producers = computeProducers(raw, state.cities, random);
 
     gf::Log::debug("Initialize physics\n");
     state.initializePhysics();

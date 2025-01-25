@@ -17,7 +17,10 @@ namespace be {
   private:
     GameState& m_state;
     const gf::Texture& m_producerTexture;
-    const gf::Texture& m_bubbleTexture;
+    const gf::Texture& m_redBubbleTexture;
+    const gf::Texture& m_blueBubbleTexture;
+    const gf::Texture& m_greenBubbleTexture;
+    const gf::Texture& m_yellowBubbleTexture;
   };
 
 
