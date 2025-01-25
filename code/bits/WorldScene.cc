@@ -19,6 +19,7 @@ namespace be {
   , m_heroEntity(game)
   , m_bubbleEntity(game)
   , m_cityEntity(game)
+  , m_mountainsEntity(game)
   , m_heroHudEntity(game)
   , m_feedbackEntity(game)
   , m_physicsDebug(game)
@@ -68,6 +69,7 @@ namespace be {
     addWorldEntity(m_heroEntity);
     addWorldEntity(m_bubbleEntity);
     addWorldEntity(m_cityEntity);
+    addWorldEntity(m_mountainsEntity);
 
     addWorldEntity(m_physicsDebug);
 

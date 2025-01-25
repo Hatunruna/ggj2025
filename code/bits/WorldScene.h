@@ -10,6 +10,7 @@
 #include "HeroEntity.h"
 #include "HeroHudEntity.h"
 #include "MapEntity.h"
+#include "MountainsEntity.h"
 #include "PhysicsDebug.h"
 
 namespace be {
@@ -40,6 +41,7 @@ namespace be {
     HeroEntity m_heroEntity;
     BubbleEntity m_bubbleEntity;
     CityEntity m_cityEntity;
+    MountainsEntity m_mountainsEntity; // Must be the last
 
     HeroHudEntity m_heroHudEntity;
     FeedbackEntity m_feedbackEntity;

@@ -68,6 +68,7 @@ add_executable(${GAME}
   code/bits/MapEntity.cc
   code/bits/MapSettings.cc
   code/bits/MapState.cc
+  code/bits/MountainsEntity.cc
   code/bits/Namegen.cc
   code/bits/PhysicsModel.cc
   code/bits/PhysicsDebug.cc
