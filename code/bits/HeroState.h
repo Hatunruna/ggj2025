@@ -5,6 +5,7 @@
 
 #include <gf/Vector.h>
 #include <gf/VectorOps.h>
+#include <gf/Orientation.h>
 
 namespace be {
 
@@ -16,6 +17,7 @@ namespace be {
     cpBody* body = nullptr;
     gf::Vector2f location;
     int64_t money = 0;
+    gf::Orientation orientation = gf::Orientation::Center;
   };
 
   template<typename Archive>

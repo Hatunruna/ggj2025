@@ -3,3 +3,4 @@ build.cmake/
 .vscode/
 .xmake/
 .cache/
+**/.DS_Store
