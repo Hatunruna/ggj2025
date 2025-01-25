@@ -6,3 +6,4 @@ magick montage -background transparent -tile 4x3 -geometry 128x128 run/bas/* ../
 magick montage -background transparent -tile 4x3 -geometry 128x128 run/droite_gauche/* ../bubble-express/animation/run_left.png
 magick montage -background transparent -tile 4x3 -geometry 128x128 run/diago_bas/* ../bubble-express/animation/run_down_right.png
 magick montage -background transparent -tile 4x3 -geometry 128x128 run/pause/* ../bubble-express/animation/idle.png
+magick montage -background transparent -tile 32x4 -geometry 64x64 ground_tiles/* ../bubble-express/ground_tiles.png
