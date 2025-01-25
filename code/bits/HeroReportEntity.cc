@@ -22,8 +22,6 @@ namespace be {
     const unsigned relativeCharacterSize = coords.getRelativeCharacterSize(characterSize);
 
     constexpr gf::Vector2f ButtonStartPoint = gf::vec(0.75f, 0.25f);
-    constexpr float spaceBetweenButton = 0.10f;
-    constexpr gf::Vector2f backgroundSize(0.35f, 0.40f);
 
     gf::Text currentCity("You are at " + m_state.cities[m_state.contract.targetCity].name, m_font, relativeCharacterSize * 0.90);
     currentCity.setAnchor(gf::Anchor::Center);
