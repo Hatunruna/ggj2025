@@ -7,6 +7,8 @@
 
 namespace be {
 
+  constexpr int GroundTilesetWidth = 20;
+
   enum class CellType : uint8_t {
     Ground,
     Block,

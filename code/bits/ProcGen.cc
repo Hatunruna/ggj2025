@@ -179,7 +179,7 @@ namespace be {
         if (random.computeBernoulli(0.95)) {
           map(position).tile = 0;
         } else {
-          map(position).tile = random.computeUniformInteger(1, 18);
+          map(position).tile = random.computeUniformInteger(1, GroundTilesetWidth - 1);
         }
       }
 

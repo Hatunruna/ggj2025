@@ -25,20 +25,16 @@ namespace be {
     // tileset.setMargin(Padding);
     // tileset.setSpacing(Margin);
     tileset.setTileSize(TileSize * 2);
-    constexpr int TilesetWidth = 32;
 
     auto& cells = m_state.map.cells;
 
     for (auto position : cells.getPositionRange()) {
       switch (cells(position).type) {
         case CellType::Ground:
-          m_tiled.setTile(position, tilesetId, TilesetWidth * 0 + cells(position).tile);
+          m_tiled.setTile(position, tilesetId, GroundTilesetWidth * 0 + cells(position).tile);
           break;
         case CellType::Cliff:
-          m_tiled.setTile(position, tilesetId, TilesetWidth * 1 + cells(position).tile);
-          break;
         case CellType::Block:
-          m_tiled.setTile(position, tilesetId, TilesetWidth * 2 + cells(position).tile);
           break;
       }
     }

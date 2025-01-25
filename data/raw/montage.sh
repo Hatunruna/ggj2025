@@ -13,4 +13,4 @@ magick montage -background transparent -tile 6x4 -geometry 200x200 verte_detruir
 magick montage -background transparent -tile 6x4 -geometry 200x200 jaune_detruirelunivers/* ../bubble-express/animation/bubble_yellow.png
 
 magick montage -background transparent -tile 3x1 -geometry 136x136 base_bulle/* ../bubble-express/producers.png
-magick montage -background transparent -tile 32x4 -geometry 64x64 ground_tiles/* ../bubble-express/ground_tiles.png
+magick montage -background '#3c96ee' -tile 20x2 -geometry 64x64 ground_tiles/* ../bubble-express/ground_tiles.png
