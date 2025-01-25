@@ -3,7 +3,9 @@
 
 #include <gf/Scene.h>
 
+#include "CityState.h"
 #include "ContractSelectionEntity.h"
+#include "ContractState.h"
 #include "HeroReportEntity.h"
 
 namespace be {
@@ -12,6 +14,8 @@ namespace be {
   class ContractScene : public gf::Scene {
   public:
     ContractScene(GameHub& game);
+
+    void selectNextContract(int index);
 
   private:
     void doHandleActions(gf::Window& window) override;
@@ -26,6 +30,8 @@ namespace be {
 
     HeroReportEntity m_report;
     ContractSelectionEntity m_selection;
+
+    std::array<ContractState, CityCount - 1> m_nextContracts;
   };
 
 }

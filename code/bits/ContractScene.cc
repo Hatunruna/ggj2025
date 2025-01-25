@@ -1,6 +1,12 @@
 #include "ContractScene.h"
 
+#include <cassert>
+#include <cstddef>
+
+#include <gf/Log.h>
+
 #include "GameHub.h"
+#include "GameState.h"
 
 namespace be {
 
@@ -18,6 +24,19 @@ namespace be {
 
     addHudEntity(m_report);
     addHudEntity(m_selection);
+  }
+
+  void ContractScene::selectNextContract(int index)
+  {
+    assert(index >= 0 && static_cast<size_t>(index) < m_nextContracts.size());
+    assert(m_nextContracts[index].targetCity >= 0 && m_nextContracts[index].targetCity < CityCount);
+    assert(m_nextContracts[index].targetCity != m_game.state.contract.targetCity);
+    m_game.state.contract = m_nextContracts[index];
+
+    const auto& cityName = m_game.state.cities[m_game.state.contract.targetCity].name;
+    gf::Log::debug("New target City: '%s'\n", cityName.c_str());
+
+    m_game.replaceAllScenes(m_game.world);
   }
 
   void ContractScene::doHandleActions([[maybe_unused]] gf::Window& window) {
@@ -49,6 +68,21 @@ namespace be {
 
   void ContractScene::doShow()
   {
-    m_selection.updateContracts();
+    const auto& previousContract = m_game.state.contract;
+
+    m_game.state.contractProgress = gf::clamp(m_game.state.contractProgress + ContractStep, ContractStep, ContractMaxStep);
+
+    for (size_t i = 0; i < m_nextContracts.size(); ++i) {
+      auto& nextContract = m_nextContracts[i];
+      nextContract.originCity = previousContract.targetCity;
+      nextContract.bubbleValueTarget = std::round(m_game.random.computeUniformFloat((m_game.state.contractProgress - 0.1f) * MaxContract, m_game.state.contractProgress * MaxContract));
+      if (i < nextContract.originCity) {
+        nextContract.targetCity = i;
+      } else {
+        nextContract.targetCity = i + 1;
+      }
+    }
+
+    m_selection.updateContracts(m_nextContracts);
   }
 }

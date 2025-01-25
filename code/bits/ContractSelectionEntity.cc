@@ -1,10 +1,13 @@
 #include "ContractSelectionEntity.h"
 
+#include <cassert>
+
 #include <gf/Coordinates.h>
 #include <gf/Log.h>
 #include <gf/StringUtils.h>
 #include <gf/Text.h>
 
+#include "ContractState.h"
 #include "GameHub.h"
 
 namespace be {
@@ -30,54 +33,21 @@ namespace be {
 
     setupButton(m_choice1, [&] () {
       gf::Log::debug("Choice 1\n");
-      if (m_game.state.contract.originCity <= 0) {
-        m_game.state.contract.targetCity = 1;
-      } else {
-        m_game.state.contract.targetCity = 0;
-      }
-
-      assert(m_game.state.contract.targetCity >= 0 && m_game.state.contract.targetCity < CityCount);
-      const std::string buttonCityName = m_choice1.getString().substr(0, m_choice1.getString().find("\n"));
-      assert(buttonCityName == m_game.state.cities[m_game.state.contract.targetCity].name);
-      gf::Log::debug("New target City: '%s'\n", buttonCityName.c_str());
-
-      m_game.replaceAllScenes(m_game.world);
+      m_game.contract.selectNextContract(0);
     });
 
     setupButton(m_choice2, [&] () {
       gf::Log::debug("Choice 2\n");
-      if (m_game.state.contract.originCity <= 1) {
-        m_game.state.contract.targetCity = 2;
-      } else {
-        m_game.state.contract.targetCity = 1;
-      }
-
-      assert(m_game.state.contract.targetCity >= 0 && m_game.state.contract.targetCity < CityCount);
-      const std::string buttonCityName = m_choice2.getString().substr(0, m_choice2.getString().find("\n"));
-      assert(buttonCityName == m_game.state.cities[m_game.state.contract.targetCity].name);
-      gf::Log::debug("New target City: '%s'\n", buttonCityName.c_str());
-
-      m_game.replaceAllScenes(m_game.world);
+      m_game.contract.selectNextContract(1);
     });
 
     setupButton(m_choice3, [&] () {
       gf::Log::debug("Choice 3\n");
-      if (m_game.state.contract.originCity <= 2) {
-        m_game.state.contract.targetCity = 3;
-      } else {
-        m_game.state.contract.targetCity = 2;
-      }
-
-      assert(m_game.state.contract.targetCity >= 0 && m_game.state.contract.targetCity < CityCount);
-      const std::string buttonCityName = m_choice3.getString().substr(0, m_choice3.getString().find("\n"));
-      assert(buttonCityName == m_game.state.cities[m_game.state.contract.targetCity].name);
-      gf::Log::debug("New target City: '%s'\n", buttonCityName.c_str());
-
-      m_game.replaceAllScenes(m_game.world);
+      m_game.contract.selectNextContract(2);
     });
   }
 
-  void ContractSelectionEntity::updateContracts()
+  void ContractSelectionEntity::updateContracts(const std::array<ContractState, CityCount - 1>& nextContracts)
   {
     const std::array<gf::TextButtonWidget*, 3> buttons = {
       &m_choice1,
@@ -85,16 +55,16 @@ namespace be {
       &m_choice3,
     };
 
-    for (int i = 0; i < m_game.state.contract.originCity; ++i) {
-      const auto& city = m_game.state.cities[i];
-      const float distance = gf::euclideanDistance(m_game.state.hero.location, city.location);
-      buttons[i]->setString(city.name + "\ndistance: " + gf::niceNum(distance, 1.0f));
-    }
+    assert(buttons.size() == nextContracts.size());
 
-    for (int i = m_game.state.contract.originCity + 1; i < m_game.state.cities.size(); ++i) {
-      const auto& city = m_game.state.cities[i];
+    for (int i = 0; i < nextContracts.size(); ++i) {
+      const auto& city = m_game.state.cities[nextContracts[i].targetCity];
       const float distance = gf::euclideanDistance(m_game.state.hero.location, city.location);
-      buttons[i - 1]->setString(city.name + "\ndistance: " + gf::niceNum(distance, 1.0f));
+      buttons[i]->setString(
+        city.name + "\n\n" +
+        "distance: " + gf::niceNum(distance, 1.0f) + "\n\n" +
+        "value: " + gf::niceNum(nextContracts[i].bubbleValueTarget, 1.0f)
+      );
     }
   }
 

@@ -6,6 +6,9 @@
 #include <gf/WidgetContainer.h>
 #include <gf/Widgets.h>
 
+#include "CityState.h"
+#include "ContractState.h"
+
 namespace be {
   struct GameHub;
 
@@ -13,7 +16,7 @@ namespace be {
   public:
     ContractSelectionEntity(GameHub& game);
 
-    void updateContracts();
+    void updateContracts(const std::array<ContractState, CityCount - 1>& nextContracts);
 
     void pointTo(const gf::Vector2f& cursor);
     void triggerAction();

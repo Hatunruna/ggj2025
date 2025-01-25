@@ -297,9 +297,6 @@ namespace be {
         continue;
       }
 
-      contract.originCity = contract.targetCity;
-      contract.targetCity = -1;
-
       gf::Log::debug("Entering the city\n");
       return true;
     }

@@ -195,6 +195,7 @@ namespace be {
 
       for (;;) {
         contract.originCity = random.computeUniformInteger(std::size_t(0), CityCount - 1);
+        contract.targetCity = contract.originCity;
 
         for (const auto& gateWorldPosition: cities[contract.originCity].gates) {
           const gf::Vector2i gateTilePosition = gateWorldPosition / TileSize;

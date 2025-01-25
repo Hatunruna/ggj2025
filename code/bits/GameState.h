@@ -18,6 +18,9 @@
 
 namespace be {
 
+  constexpr float ContractStep = 0.20f;
+  constexpr float ContractMaxStep = 1.0f;
+
   struct GameState : gf::Model {
     static constexpr uint16_t Version = 1;
 
@@ -30,6 +33,7 @@ namespace be {
     std::vector<BubbleState> free_bubbles;
     std::array<CityState, CityCount> cities;
     ContractState contract;
+    float contractProgress = ContractStep;
 
     void initializePhysics();
 
@@ -47,7 +51,7 @@ namespace be {
 
   template<typename Archive>
   Archive& operator|(Archive& ar, GameState& state) {
-    return ar | state.map | state.hero | state.producers | state.bubbles | state.cities | state.contract;
+    return ar | state.map | state.hero | state.producers | state.bubbles | state.cities | state.contract | state.contractProgress;
   }
 
 }

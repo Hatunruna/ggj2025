@@ -9,6 +9,7 @@
 namespace be {
 
   constexpr float HeroVelocity = 200.0f;
+  constexpr int HeroMaxBubble = 5;
 
   struct HeroState {
     cpBody* control = nullptr;
