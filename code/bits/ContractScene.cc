@@ -31,7 +31,7 @@ namespace be {
   void ContractScene::selectNextContract(int index)
   {
     assert(index >= 0 && static_cast<size_t>(index) < m_nextContracts.size());
-    assert(m_nextContracts[index].targetCity >= 0 && m_nextContracts[index].targetCity < CityCount);
+    assert(m_nextContracts[index].targetCity >= 0 && m_nextContracts[index].targetCity < int(CityCount));
     assert(m_nextContracts[index].targetCity != m_game.state.contract.targetCity);
     m_game.state.contract = m_nextContracts[index];
 
@@ -74,7 +74,7 @@ namespace be {
 
     m_game.state.contractProgress = gf::clamp(m_game.state.contractProgress + ContractStep, ContractStep, ContractMaxStep);
 
-    for (size_t i = 0; i < m_nextContracts.size(); ++i) {
+    for (int i = 0; i < int(m_nextContracts.size()); ++i) {
       auto& nextContract = m_nextContracts[i];
       nextContract.originCity = previousContract.targetCity;
       nextContract.bubbleValueTarget = std::round(m_game.random.computeUniformFloat((m_game.state.contractProgress - 0.1f) * MaxContract, m_game.state.contractProgress * MaxContract));

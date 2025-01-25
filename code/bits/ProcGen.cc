@@ -255,7 +255,7 @@ namespace be {
       }
 
       // Color producers
-      for (int i = 0; i < CityCount; ++i) {
+      for (std::size_t i = 0; i < CityCount; ++i) {
         const auto& city = cities[i];
         BubbleType type = static_cast<BubbleType>(i); // unsafe
 
@@ -264,12 +264,13 @@ namespace be {
         });
 
         assert((ProducerCount % ProducerCount) == 0);
-        constexpr int CityProducerCount = ProducerCount / CityCount;
+        constexpr std::size_t CityProducerCount = ProducerCount / CityCount;
 
-        int coloredProducer = 0;
-        for (int i = 0; coloredProducer < CityProducerCount; ++i) {
-          if (producers[i].type == BubbleType::None) {
-            producers[i].type = type;
+        std::size_t coloredProducer = 0;
+
+        for (std::size_t j = 0; coloredProducer < CityProducerCount; ++j) {
+          if (producers[j].type == BubbleType::None) {
+            producers[j].type = type;
             ++coloredProducer;
           }
         }

@@ -57,7 +57,7 @@ namespace be {
 
     assert(buttons.size() == nextContracts.size());
 
-    for (int i = 0; i < nextContracts.size(); ++i) {
+    for (std::size_t i = 0; i < nextContracts.size(); ++i) {
       const auto& city = m_game.state.cities[nextContracts[i].targetCity];
       const float distance = gf::euclideanDistance(m_game.state.hero.location, city.location);
       buttons[i]->setString(

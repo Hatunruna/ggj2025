@@ -26,7 +26,7 @@ namespace be {
     gf::Sprite sprite(m_texture);
     sprite.setAnchor(gf::Anchor::Center);
 
-    for (int i = 0; i < m_state.cities.size(); ++i) {
+    for (int i = 0; i < int(m_state.cities.size()); ++i) {
       const auto& city = m_state.cities[i];
       // sprite.setPosition(city.location);
       // target.draw(sprite, states);
