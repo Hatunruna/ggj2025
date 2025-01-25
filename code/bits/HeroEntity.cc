@@ -75,13 +75,21 @@ namespace be {
 
   void HeroEntity::render(gf::RenderTarget &target, const gf::RenderStates &states)
   {
-    gf::Vector2f direction = gf::normalize(m_state.cities[m_state.contract.targetCity].location - m_state.hero.location);
-    gf::CircleShape circle(ArrowSize, 3);
-    circle.setColor(gf::Color::Red);
-    circle.setAnchor(gf::Anchor::Center);
-    circle.setPosition(m_state.hero.location + ArrowRange * direction);
-    circle.setRotation(gf::angle(direction) + gf::Pi2);
-    target.draw(circle, states);
+    gf::Vector2f directionCity = gf::normalize(m_state.cities[m_state.contract.targetCity].location - m_state.hero.location);
+    gf::CircleShape targetCityArrow(ArrowSize, 3);
+    targetCityArrow.setColor(gf::Color::Red);
+    targetCityArrow.setAnchor(gf::Anchor::Center);
+    targetCityArrow.setPosition(m_state.hero.location + ArrowRange * directionCity);
+    targetCityArrow.setRotation(gf::angle(directionCity) + gf::Pi2);
+    target.draw(targetCityArrow, states);
+
+    gf::Vector2f directionBubble = gf::normalize(m_state.cities[(int)m_state.contract.type].location - m_state.hero.location);
+    gf::CircleShape targetBubbleArrow(ArrowSize, 3);
+    targetBubbleArrow.setColor(gf::Color::Yellow);
+    targetBubbleArrow.setAnchor(gf::Anchor::Center);
+    targetBubbleArrow.setPosition(m_state.hero.location + ArrowRange * directionBubble);
+    targetBubbleArrow.setRotation(gf::angle(directionBubble) + gf::Pi2);
+    target.draw(targetBubbleArrow, states);
 
     gf::AnimatedSprite animatedSprite;
     animatedSprite.setAnimation(*m_currentAnimation);
