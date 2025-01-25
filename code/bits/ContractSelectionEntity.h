@@ -31,12 +31,12 @@ namespace be {
     GameHub& m_game;
     gf::Font& m_font;
 
+    std::array<gf::Ref<gf::Texture>, CityCount> m_textures;
+    gf::Texture* m_choicesBubble[3];
+
     gf::Text m_text1;
     gf::Text m_text2;
     gf::Text m_text3;
-
-    std::array<gf::Ref<gf::Texture>, CityCount> m_textures;
-    gf::Texture* m_choicesBubble[3];
 
     gf::TextButtonWidget m_choice1;
     gf::TextButtonWidget m_choice2;

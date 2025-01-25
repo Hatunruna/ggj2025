@@ -17,18 +17,18 @@ namespace be {
   ContractSelectionEntity::ContractSelectionEntity(GameHub& game)
   : m_game(game)
   , m_font(game.resources.getFont("DejaVuSans.ttf"))
-  , m_choice1("Choice 1", m_font)
-  , m_choice2("Choice 2", m_font)
-  , m_choice3("Choice 3", m_font)
-  , m_text1("Choice1", m_font)
-  , m_text2("Choice2", m_font)
-  , m_text3("Choice3", m_font)
   , m_textures({
     game.resources.getTexture("redBubble.png"),
     game.resources.getTexture("blueBubble.png"),
     game.resources.getTexture("greenBubble.png"),
     game.resources.getTexture("yellowBubble.png"),
   })
+  , m_text1("Choice1", m_font)
+  , m_text2("Choice2", m_font)
+  , m_text3("Choice3", m_font)
+  , m_choice1("Choice 1", m_font)
+  , m_choice2("Choice 2", m_font)
+  , m_choice3("Choice 3", m_font)
   {
     auto setupButton = [&] (gf::TextButtonWidget& button, auto callback) {
       button.setDefaultTextColor(gf::Color::Black);
