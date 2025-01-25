@@ -2,6 +2,7 @@
 
 #include <gf/Coordinates.h>
 #include <gf/Log.h>
+#include <gf/StringUtils.h>
 #include <gf/Text.h>
 
 #include "GameHub.h"
@@ -36,9 +37,9 @@ namespace be {
       }
 
       assert(m_game.state.contract.targetCity >= 0 && m_game.state.contract.targetCity < CityCount);
-      assert(m_choice1.getString() == m_game.state.cities[m_game.state.contract.targetCity].name);
-
-      gf::Log::debug("New target City: %s\n", m_game.state.cities[m_game.state.contract.targetCity].name.c_str());
+      const std::string buttonCityName = m_choice1.getString().substr(0, m_choice1.getString().find("\n"));
+      assert(buttonCityName == m_game.state.cities[m_game.state.contract.targetCity].name);
+      gf::Log::debug("New target City: '%s'\n", buttonCityName.c_str());
 
       m_game.replaceAllScenes(m_game.world);
     });
@@ -52,9 +53,9 @@ namespace be {
       }
 
       assert(m_game.state.contract.targetCity >= 0 && m_game.state.contract.targetCity < CityCount);
-      assert(m_choice2.getString() == m_game.state.cities[m_game.state.contract.targetCity].name);
-
-      gf::Log::debug("New target City: %s\n", m_game.state.cities[m_game.state.contract.targetCity].name.c_str());
+      const std::string buttonCityName = m_choice2.getString().substr(0, m_choice2.getString().find("\n"));
+      assert(buttonCityName == m_game.state.cities[m_game.state.contract.targetCity].name);
+      gf::Log::debug("New target City: '%s'\n", buttonCityName.c_str());
 
       m_game.replaceAllScenes(m_game.world);
     });
@@ -68,9 +69,9 @@ namespace be {
       }
 
       assert(m_game.state.contract.targetCity >= 0 && m_game.state.contract.targetCity < CityCount);
-      assert(m_choice3.getString() == m_game.state.cities[m_game.state.contract.targetCity].name);
-
-      gf::Log::debug("New target City: %s\n", m_game.state.cities[m_game.state.contract.targetCity].name.c_str());
+      const std::string buttonCityName = m_choice3.getString().substr(0, m_choice3.getString().find("\n"));
+      assert(buttonCityName == m_game.state.cities[m_game.state.contract.targetCity].name);
+      gf::Log::debug("New target City: '%s'\n", buttonCityName.c_str());
 
       m_game.replaceAllScenes(m_game.world);
     });
@@ -85,11 +86,15 @@ namespace be {
     };
 
     for (int i = 0; i < m_game.state.contract.originCity; ++i) {
-      buttons[i]->setString(m_game.state.cities[i].name);
+      const auto& city = m_game.state.cities[i];
+      const float distance = gf::euclideanDistance(m_game.state.hero.location, city.location);
+      buttons[i]->setString(city.name + "\ndistance: " + gf::niceNum(distance, 1.0f));
     }
 
     for (int i = m_game.state.contract.originCity + 1; i < m_game.state.cities.size(); ++i) {
-      buttons[i - 1]->setString(m_game.state.cities[i].name);
+      const auto& city = m_game.state.cities[i];
+      const float distance = gf::euclideanDistance(m_game.state.hero.location, city.location);
+      buttons[i - 1]->setString(city.name + "\ndistance: " + gf::niceNum(distance, 1.0f));
     }
   }
 
@@ -110,36 +115,32 @@ namespace be {
     constexpr float characterSize = 0.055f;
     const unsigned relativeCharacterSize = coords.getRelativeCharacterSize(characterSize);
 
-    constexpr gf::Vector2f ButtonStartPoint = gf::vec(0.75f, 0.25f);
-    constexpr float spaceBetweenButton = 0.10f;
-    constexpr gf::Vector2f backgroundSize(0.35f, 0.40f);
-
-    const float paragraphWidth = coords.getRelativeSize(backgroundSize - 0.05f).x;
+    const float paragraphWidth = coords.getRelativeSize({0.25f, 0.0f}).width;
     const float paddingSize = coords.getRelativeSize({0.01f, 0.f}).x;
 
     gf::Text selectionTitle("Choose your next halt", m_font, relativeCharacterSize * 0.90);
-    selectionTitle.setAnchor(gf::Anchor::Center);
+    selectionTitle.setAnchor(gf::Anchor::BottomCenter);
     selectionTitle.setColor(gf::Color::White);
-    selectionTitle.setPosition(coords.getRelativePoint(ButtonStartPoint));
+    selectionTitle.setPosition(coords.getRelativePoint({0.50f, 0.36f}));
     target.draw(selectionTitle, states);
 
     m_choice1.setCharacterSize(relativeCharacterSize);
     m_choice1.setParagraphWidth(paragraphWidth);
     m_choice1.setPadding(paddingSize);
-    m_choice1.setAnchor(gf::Anchor::Center);
-    m_choice1.setPosition(coords.getRelativePoint(ButtonStartPoint + gf::vec(0.0f, (spaceBetweenButton) * 1.0f)));
+    m_choice1.setAnchor(gf::Anchor::TopCenter);
+    m_choice1.setPosition(coords.getRelativePoint({0.20f, 0.40f}));
 
     m_choice2.setCharacterSize(relativeCharacterSize);
     m_choice2.setParagraphWidth(paragraphWidth);
     m_choice2.setPadding(paddingSize);
-    m_choice2.setAnchor(gf::Anchor::Center);
-    m_choice2.setPosition(coords.getRelativePoint(ButtonStartPoint + gf::vec(0.0f, (spaceBetweenButton) * 2.0f)));
+    m_choice2.setAnchor(gf::Anchor::TopCenter);
+    m_choice2.setPosition(coords.getRelativePoint({0.50f, 0.40f}));
 
     m_choice3.setCharacterSize(relativeCharacterSize);
     m_choice3.setParagraphWidth(paragraphWidth);
     m_choice3.setPadding(paddingSize);
-    m_choice3.setAnchor(gf::Anchor::Center);
-    m_choice3.setPosition(coords.getRelativePoint(ButtonStartPoint + gf::vec(0.0f, (spaceBetweenButton) * 3.0f)));
+    m_choice3.setAnchor(gf::Anchor::TopCenter);
+    m_choice3.setPosition(coords.getRelativePoint({0.80f, 0.40f}));
 
     m_widgets.render(target, states);
   }
