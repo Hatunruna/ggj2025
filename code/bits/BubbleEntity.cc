@@ -62,11 +62,11 @@ namespace be {
     for (auto& producer : m_state.producers) {
       gf::Sprite producerSprite(m_producerTexture, gf::RectF::fromPositionSize({ 1.0f / 3.0f * producer.tile, 0.0f }, { 1.0f / 3.0f, 1.0f }));
       producerSprite.setAnchor(gf::Anchor::TopCenter);
-      producerSprite.setPosition(producer.location);
+      producerSprite.setPosition(producer.spot.location);
       producerSprite.setScale(0.4f);
       target.draw(producerSprite, states);
 
-      drawBubble(producer.location, producer.size, producer.type, gf::Anchor::BottomCenter);
+      drawBubble(producer.spot.location, producer.size, producer.type, gf::Anchor::BottomCenter);
     }
 
     for (auto& bubble : m_state.bubbles) {

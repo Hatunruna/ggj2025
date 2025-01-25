@@ -187,7 +187,7 @@ namespace be {
     cpSpaceAddBody(space, producersBody);
 
     for (auto& producer : producers) {
-      auto producerShape = cpCircleShapeNew(producersBody, ProducerRadius, cpv(producer.location.x, producer.location.y));
+      auto producerShape = cpCircleShapeNew(producersBody, ProducerRadius, cpv(producer.spot.location.x, producer.spot.location.y));
       cpSpaceAddShape(space, producerShape);
     }
 
@@ -230,7 +230,7 @@ namespace be {
     cpSpace* space = physics.getSpace();
 
     for (auto& producer : producers) {
-      if (gf::squareDistance(producer.location, hero.location) > gf::square(ProducerDistance)) {
+      if (gf::squareDistance(producer.spot.location, hero.location) > gf::square(ProducerDistance)) {
         continue;
       }
 
@@ -247,7 +247,7 @@ namespace be {
       bubble.size = producer.size;
       bubble.type = producer.type;
 
-      const gf::Vector2f location = producer.location - gf::diry(bubble.size * BubbleRadius);
+      const gf::Vector2f location = producer.spot.location - gf::diry(bubble.size * BubbleRadius);
       initializeBubblePhysics(bubble, space, cpv(location.x, location.y), hero.body);
 
       bubbles.push_back(bubble);
@@ -324,7 +324,7 @@ namespace be {
   {
     const auto& city = cities[contract.targetCity];
     for (const auto& gate: city.gates) {
-      if (gf::squareDistance(gate, hero.location) > gf::square(ProducerDistance)) {
+      if (gf::squareDistance(gate.location, hero.location) > gf::square(ProducerDistance)) {
         continue;
       }
 

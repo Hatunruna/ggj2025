@@ -74,7 +74,7 @@ namespace be {
 
     for (std::size_t i = 0; i < nextContracts.size(); ++i) {
       const auto& city = m_game.state.cities[nextContracts[i].targetCity];
-      const float distance = gf::euclideanDistance(m_game.state.hero.location, city.location);
+      const float distance = gf::euclideanDistance(m_game.state.hero.location, city.spot.location);
       texts[i]->setString(
         city.name + "\n\n" +
         "distance: " + gf::niceNum(distance, 1.0f) + "\n\n" +

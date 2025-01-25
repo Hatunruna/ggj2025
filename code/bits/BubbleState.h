@@ -10,6 +10,8 @@
 #include <gf/Random.h>
 #include <gf/Time.h>
 
+#include "Spot.h"
+
 namespace be {
 
   enum class BubbleProducerStatus : uint8_t {
@@ -34,7 +36,7 @@ namespace be {
 
   struct BubbleProducerState {
     BubbleProducerStatus status = BubbleProducerStatus::Emerging;
-    gf::Vector2f location;
+    Spot spot;
 
     // bubble
     float size = 0.0f;
@@ -50,7 +52,7 @@ namespace be {
 
   template<typename Archive>
   Archive& operator|(Archive& ar, BubbleProducerState& state) {
-    return ar | state.status | state.location | state.size | state.lifetime | state.type | state.minSize | state.maxSize | state.growthRate;
+    return ar | state.status | state.spot | state.size | state.lifetime | state.type | state.minSize | state.maxSize | state.growthRate;
   }
 
   struct BubbleState {

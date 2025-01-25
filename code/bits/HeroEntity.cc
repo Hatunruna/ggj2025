@@ -76,7 +76,7 @@ namespace be {
 
   void HeroEntity::render(gf::RenderTarget &target, const gf::RenderStates &states)
   {
-    gf::Vector2f directionCity = gf::normalize(m_state.cities[m_state.contract.targetCity].location - m_state.hero.location);
+    gf::Vector2f directionCity = gf::normalize(m_state.cities[m_state.contract.targetCity].spot.location - m_state.hero.location);
     gf::CircleShape targetCityArrow(ArrowSize, 3);
     targetCityArrow.setColor(gf::Color::Red);
     targetCityArrow.setAnchor(gf::Anchor::Center);
@@ -84,7 +84,7 @@ namespace be {
     targetCityArrow.setRotation(gf::angle(directionCity) + gf::Pi2);
     target.draw(targetCityArrow, states);
 
-    gf::Vector2f directionBubble = gf::normalize(m_state.cities[(int)m_state.contract.type].location - m_state.hero.location);
+    gf::Vector2f directionBubble = gf::normalize(m_state.cities[(int)m_state.contract.type].spot.location - m_state.hero.location);
     gf::CircleShape targetBubbleArrow(ArrowSize, 3);
     targetBubbleArrow.setColor(gf::Color::Yellow);
     targetBubbleArrow.setAnchor(gf::Anchor::Center);

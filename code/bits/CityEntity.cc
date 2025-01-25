@@ -38,13 +38,13 @@ namespace be {
       } else {
         name.setColor(gf::Color::White);
       }
-      name.setPosition(city.location);
+      name.setPosition(city.spot.location);
       target.draw(name, states);
 
-      for (const auto& gatePosition: city.gates) {
+      for (const auto& gateSpot: city.gates) {
         gf::RectangleShape gate(TileSize);
         gate.setAnchor(gf::Anchor::Center);
-        gate.setPosition(gatePosition);
+        gate.setPosition(gateSpot.location);
         gate.setColor(gf::Color::Cyan);
         target.draw(gate, states);
       }

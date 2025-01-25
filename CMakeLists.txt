@@ -73,6 +73,7 @@ add_executable(${GAME}
   code/bits/PhysicsModel.cc
   code/bits/PhysicsDebug.cc
   code/bits/ProcGen.cc
+  code/bits/Spot.cc
   code/bits/StartScene.cc
   code/bits/Support.cc
   code/bits/TitleEntity.cc

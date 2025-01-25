@@ -3,14 +3,16 @@
 #include <cassert>
 
 #include <algorithm>
+#include <array>
 #include <filesystem>
 #include <fstream>
 #include <limits>
 #include <queue>
+#include <utility>
 
+#include <gf/Direction.h>
 #include <gf/Log.h>
 #include <gf/VectorOps.h>
-#include <utility>
 
 #include "CityState.h"
 #include "ContractState.h"
@@ -34,364 +36,381 @@ namespace be {
     // producers settings
 
     constexpr int ProducerCount = 100;
-    constexpr float ProducerMinDistanceFromOther = 1000.0f;
+    constexpr int ProducerMinDistanceFromOther = 32;
 
     // cities settings
 
     constexpr int CityMinDistanceFromOther = 350;
 
-
     // raw
 
-    enum class RawCell {
-      Ground,
-      Block,
-      Gate,
+    class Sanitizer {
+    public:
+      static constexpr std::size_t NoZone = std::numeric_limits<std::size_t>::max();
+
+      Sanitizer(gf::Array2D<MapCell, int32_t>& cells)
+      : m_cells(cells)
+      , m_zones(cells.getSize(), NoZone)
+      {
+      }
+
+      void run()
+      {
+        std::size_t chosen_zone = NoZone;
+        std::size_t chosen_count = 0;
+
+        std::size_t current_zone = 0;
+
+        for (auto position : m_cells.getPositionRange()) {
+          if (m_cells(position).type == CellType::Ground && m_zones(position) == NoZone) {
+            auto count = traverse(position, current_zone);
+
+            if (count > chosen_count) {
+              chosen_count = count;
+              chosen_zone = current_zone;
+            }
+
+            ++current_zone;
+          }
+        }
+
+        assert(chosen_zone != NoZone);
+
+        for (auto position : m_cells.getPositionRange()) {
+          if (m_zones(position) != chosen_zone) {
+            m_cells(position).type = CellType::Block;
+          }
+        }
+      }
+
+    private:
+      std::size_t traverse(gf::Vector2i start, std::size_t zone)
+      {
+        std::queue<gf::Vector2i> queue;
+        queue.push(start);
+        std::size_t count = 0;
+
+        m_zones(start) = zone;
+
+        while (!queue.empty()) {
+          gf::Vector2i current = queue.front();
+          queue.pop();
+          ++count;
+
+          assert(m_cells(current).type == CellType::Ground);
+          assert(m_zones(current) == zone);
+
+          for (auto neighbor : m_cells.get4NeighborsRange(current)) {
+            if (m_cells(neighbor).type == CellType::Block) {
+              continue;
+            }
+
+            if (m_zones(neighbor) == NoZone) {
+              m_zones(neighbor) = zone;
+              queue.push(neighbor);
+            }
+          }
+        }
+
+        return count;
+      }
+
+      gf::Array2D<MapCell, int32_t>& m_cells;
+      gf::Array2D<std::size_t, int> m_zones;
     };
 
-    gf::Array2D<RawCell> generateRawMap(gf::Random& random)
-    {
-      gf::Array2D<RawCell> raw(MapSize);
 
-      for (auto& cell : raw) {
-        if (random.computeUniformFloat(0.0f, 1.0f) > Threshold) {
-          cell = RawCell::Ground;
-        } else {
-          cell = RawCell::Block;
-        }
-      }
+    class Generator {
+    public:
+      Generator(GameState& state, gf::Random& random, gf::ResourceManager& resources)
+      : m_state(state)
+      , m_random(random)
+      {
+        /*
+         * Origin: https://www.data.gouv.fr/fr/datasets/villes-de-france/#/resources
+         * Sanitized to have unique names without numeric suffixes (PLM)
+         */
+        std::filesystem::path filename = resources.getAbsolutePath("cities.txt");
+        std::ifstream file(filename);
 
-      for (int i = 0; i < Iterations; ++i) {
-        gf::Array2D<RawCell> next(MapSize);
-
-        for (const gf::Vector2i position : raw.getPositionRange()) {
-          int count = 0;
-
-          for (const gf::Vector2i neighbor : raw.get12NeighborsRange(position)) {
-            count += raw(neighbor) == RawCell::Ground ? 1 : 0;;
-          }
-
-          if (raw(position) == RawCell::Ground) {
-            if (count >= SurvivalThreshold) {
-              next(position) = RawCell::Ground;
-            } else {
-              next(position) = RawCell::Block;
-            }
-          } else {
-            if (count >= BirthThreshold) {
-              next(position) = RawCell::Ground;
-            } else {
-              next(position) = RawCell::Block;
-            }
-          }
-        }
-
-        raw = std::move(next);
-      }
-
-      return raw;
-    }
-
-    constexpr std::size_t NoZone = std::numeric_limits<std::size_t>::max();
-
-    std::size_t traverseMap(const gf::Array2D<RawCell>& raw, gf::Array2D<std::size_t, int>& zones, gf::Vector2i start, std::size_t zone)
-    {
-      std::queue<gf::Vector2i> queue;
-      queue.push(start);
-      std::size_t count = 0;
-
-      zones(start) = zone;
-
-      while (!queue.empty()) {
-        gf::Vector2i current = queue.front();
-        queue.pop();
-        ++count;
-
-        assert(raw(current) == RawCell::Ground || raw(current) == RawCell::Gate);
-        assert(zones(current) == zone);
-
-        for (auto neighbor : raw.get4NeighborsRange(current)) {
-          if (raw(neighbor) == RawCell::Block) {
+        for (std::string line; std::getline(file, line); ) {
+          if (line.empty() || line == "\n") {
             continue;
           }
 
-          if (zones(neighbor) == NoZone) {
-            zones(neighbor) = zone;
-            queue.push(neighbor);
+          m_data.push_back(std::move(line));
+        }
+      }
+
+      void run()
+      {
+        generateBaseMap();
+        generateCities();
+        sanitizeMap();
+        generatePaths();
+
+        computeStartPoint();
+        computeProducers();
+        computeTiles();
+
+      }
+
+    private:
+      void generateBaseMap()
+      {
+        auto& cells = m_state.map.cells;
+        cells = gf::Array2D<MapCell, int32_t>(MapSize);
+
+        for (auto& cell : cells) {
+          if (m_random.computeUniformFloat(0.0f, 1.0f) > Threshold) {
+            cell.type = CellType::Ground;
+          } else {
+            cell.type = CellType::Block;
           }
         }
-      }
 
-      return count;
-    }
+        for (int i = 0; i < Iterations; ++i) {
+          gf::Array2D<MapCell, int32_t> next(MapSize);
 
-    void sanitizeMap(gf::Array2D<RawCell>& raw)
-    {
-      gf::Array2D<std::size_t, int> zones(raw.getSize(), NoZone);
-      std::vector<std::size_t> counts;
+          for (const gf::Vector2i position : cells.getPositionRange()) {
+            int count = 0;
 
-      for (auto position : raw.getPositionRange()) {
-        if (raw(position) == RawCell::Ground && zones(position) == NoZone) {
-          auto count = traverseMap(raw, zones, position, counts.size());
-          counts.push_back(count);
-        }
-      }
+            for (const gf::Vector2i neighbor : cells.get12NeighborsRange(position)) {
+              count += cells(neighbor).type == CellType::Ground ? 1 : 0;;
+            }
 
-      auto iterator = std::max_element(counts.begin(), counts.end());
-      assert(iterator != counts.end());
-
-      const std::size_t good = std::distance(counts.begin(), iterator);
-
-      for (auto position : raw.getPositionRange()) {
-        if (zones(position) != good) {
-          raw(position) = RawCell::Block;
-        }
-      }
-    }
-
-    bool isLargeGround(const gf::Array2D<RawCell>& raw, gf::Vector2i position) {
-      if (raw(position) != RawCell::Ground) {
-        return false;
-      }
-
-      int count = 0;
-
-      for (gf::Vector2i neighbor : raw.get12NeighborsRange(position)) {
-        if (raw(neighbor) == RawCell::Ground) {
-          ++count;
-        }
-      }
-
-      return count == 12;
-    }
-
-    gf::Array2D<MapCell, int32_t> transformRawMap(const gf::Array2D<RawCell>& raw, gf::Random& random)
-    {
-      gf::Array2D<MapCell, int32_t> map(MapSize);
-
-      for (gf::Vector2i position : raw.getPositionRange()) {
-        if (raw(position) == RawCell::Block) {
-          map(position).type = CellType::Block;
-        } else {
-          map(position).type = CellType::Ground;
-        }
-
-        if (random.computeBernoulli(0.95)) {
-          map(position).tile = 0;
-        } else {
-          map(position).tile = random.computeUniformInteger(1, GroundTilesetWidth - 1);
-        }
-      }
-
-      for (gf::Vector2i position : map.getPositionRange()) {
-        if (position.y > 0 && map(position).type == CellType::Block && map({ position.x, position.y + 1 }).type == CellType::Ground) {
-          map(position).type = CellType::Cliff;
-        }
-      }
-
-      return map;
-    }
-
-    std::pair<ContractState, HeroState> computeStartPoint(const gf::Array2D<RawCell>& raw, const std::array<CityState, CityCount>& cities, gf::Random& random)
-    {
-      ContractState contract = {};
-      HeroState hero = {};
-
-      for (;;) {
-        contract.originCity = random.computeUniformInteger(std::size_t(0), CityCount - 1);
-        contract.targetCity = contract.originCity;
-
-        for (const auto& gateWorldPosition: cities[contract.originCity].gates) {
-          const gf::Vector2i gateTilePosition = gateWorldPosition / TileSize;
-          if (raw(gateTilePosition) == RawCell::Gate) {
-            for (const auto position: raw.get8NeighborsRange(gateTilePosition)) {
-            if (raw(position) == RawCell::Ground) {
-                gf::Log::debug("Origin City: %s\n", cities[contract.originCity].name.c_str());
-                hero.location = (position + 0.5f) * TileSize;
-                return std::make_pair(contract, hero);
+            if (cells(position).type == CellType::Ground) {
+              if (count >= SurvivalThreshold) {
+                next(position).type = CellType::Ground;
+              } else {
+                next(position).type = CellType::Block;
+              }
+            } else {
+              if (count >= BirthThreshold) {
+                next(position).type = CellType::Ground;
+              } else {
+                next(position).type = CellType::Block;
               }
             }
           }
+
+          cells = std::move(next);
         }
       }
-    }
 
-    bool isFarFromProducers(const std::vector<BubbleProducerState>& producers, gf::Vector2f location, float minDistance)
-    {
-      for (auto& producer : producers) {
-        if (gf::squareDistance(producer.location, location) < gf::square(minDistance)) {
+      void generateCities()
+      {
+        // positions
+
+        std::array<gf::Vector2i, CityCount> positions;
+
+        for (;;) {
+          for (std::size_t i = 0; i < CityCount; ++i) {
+            positions[i] = m_random.computePosition(gf::RectI::fromSize(MapSize - 1).shrink(CityRadius));
+          }
+
+          int minDistance = std::numeric_limits<int>::max();
+
+          for (std::size_t i = 0; i < CityCount; ++i) {
+            for (std::size_t j = i + 1; j < CityCount; ++j) {
+              int distance = gf::manhattanDistance(positions[i], positions[j]);
+              minDistance = std::min(minDistance, distance);
+            }
+          }
+
+          if (minDistance > CityMinDistanceFromOther) {
+            break;
+          }
+        }
+
+        // names
+
+        NamegenSettings settings = {};
+        settings.minLength = 5;
+        settings.maxLength = 12;
+
+        NamegenManager namegen(m_data, 3, 0.001, true);
+        auto names = namegen.generateMultiple(m_random, CityCount, gf::seconds(0.5), settings);
+
+        for (auto& name : names) {
+          gf::Log::debug("- %s\n", name.c_str());
+        }
+
+        // cities
+
+        auto& cells = m_state.map.cells;
+
+        for (std::size_t i = 0; i < CityCount; ++i) {
+          m_state.cities[i].name = names[i];
+          m_state.cities[i].spot = positions[i];
+
+          std::vector<gf::Vector2i> points;
+          points.push_back(positions[i]);
+
+          for (int radius = 1; radius <= CityRadius; ++radius) {
+            auto circle = generateCircle(positions[i], radius);
+            points.insert(points.end(), circle.begin(), circle.end());
+          }
+
+          for (auto point : points) {
+            cells(point).type = CellType::Block;
+          }
+        }
+
+        // gates
+
+        for (auto& city : m_state.cities) {
+          for (auto direction : { gf::Direction::Left, gf::Direction::Down, gf::Direction::Right }) {
+            gf::Vector2i current = city.spot.position;
+
+            for (;;) {
+              if (!cells.isValid(current)) {
+                break;
+              }
+
+              if (gf::manhattanDistance(current, city.spot.position) > CityRadius + 5) {
+                break;
+              }
+
+              if (cells(current).type == CellType::Ground) {
+                city.gates.push_back(current);
+                break;
+              }
+
+              current += gf::displacement(direction);
+            }
+          }
+        }
+      }
+
+      void sanitizeMap()
+      {
+        Sanitizer sanitizer(m_state.map.cells);
+        sanitizer.run();
+      }
+
+      void generatePaths()
+      {
+        // TODO
+      }
+
+      void computeStartPoint()
+      {
+        const std::size_t city = m_random.computeUniformInteger(std::size_t(0), CityCount - 1);
+        m_state.contract.originCity = m_state.contract.targetCity = city;
+
+        assert(!m_state.cities[city].gates.empty());
+        const std::size_t gate = m_random.computeUniformInteger(std::size_t(0), m_state.cities[city].gates.size() - 1);
+
+        m_state.hero.location = m_state.cities[city].gates[gate].location;
+      }
+
+      bool isLargeGround(gf::Vector2i position) {
+        auto& cells = m_state.map.cells;
+
+        if (cells(position).type != CellType::Ground) {
           return false;
         }
-      }
 
-      return true;
-    }
+        int count = 0;
 
-    std::vector<BubbleProducerState> computeProducers(const gf::Array2D<RawCell>& raw, const std::array<CityState, CityCount>& cities, gf::Random& random)
-    {
-      std::vector<BubbleProducerState> producers;
-
-      for (int i = 0; i < ProducerCount; ++i) {
-        for (;;) {
-          const gf::Vector2i position = random.computePosition(gf::RectI::fromSize(raw.getSize() - 1));
-
-          if (!isLargeGround(raw, position)) {
-            continue;
-          }
-
-          const gf::Vector2f location = (position + 0.5f) * TileSize;
-
-          if (!isFarFromProducers(producers, location, ProducerMinDistanceFromOther)) {
-            continue;
-          }
-
-          BubbleProducerState state = {};
-          state.status = BubbleProducerStatus::Growing;
-          state.location = location;
-          state.minSize = BubbleMinSize;
-          state.maxSize = BubbleMaxSize;
-          state.growthRate = ProducerGrowRate;
-          state.size = random.computeUniformFloat(state.minSize, state.maxSize);
-          state.tile = random.computeUniformInteger(0, 2);
-
-          producers.push_back(std::move(state));
-          break;
-        }
-      }
-
-      // Color producers
-      for (std::size_t i = 0; i < CityCount; ++i) {
-        const auto& city = cities[i];
-        BubbleType type = static_cast<BubbleType>(i); // unsafe
-
-        std::sort(producers.begin(), producers.end(), [cityLocation = city.location](const auto& lhs, const auto& rhs) -> bool {
-          return gf::euclideanDistance(lhs.location, cityLocation) < gf::euclideanDistance(rhs.location, cityLocation);
-        });
-
-        assert((ProducerCount % ProducerCount) == 0);
-        constexpr std::size_t CityProducerCount = ProducerCount / CityCount;
-
-        std::size_t coloredProducer = 0;
-
-        for (std::size_t j = 0; coloredProducer < CityProducerCount; ++j) {
-          if (producers[j].type == BubbleType::None) {
-            producers[j].type = type;
-            ++coloredProducer;
-          }
-        }
-      }
-
-      // Check producers are all colored
-      for (const auto& producer: producers) {
-        assert(producer.type != BubbleType::None);
-      }
-
-      return producers;
-    }
-
-    std::array<CityState, CityCount> computeCities(gf::Array2D<RawCell>& raw, gf::Random& random, gf::ResourceManager& resources)
-    {
-      /*
-       * Origin: https://www.data.gouv.fr/fr/datasets/villes-de-france/#/resources
-       * Sanitized to have unique names without numeric suffixes (PLM)
-       */
-      std::filesystem::path filename = resources.getAbsolutePath("cities.txt");
-      std::ifstream file(filename);
-
-      std::vector<std::string> data;
-
-      for (std::string line; std::getline(file, line); ) {
-        if (line.empty() || line == "\n") {
-          continue;
-        }
-
-        data.push_back(std::move(line));
-      }
-
-      NamegenSettings settings = {};
-      settings.minLength = 3;
-      settings.maxLength = 15;
-
-      NamegenManager namegen(data, 3, 0.001, true);
-      auto names = namegen.generateMultiple(random, CityCount, gf::seconds(0.5), settings);
-
-      for (auto& name : names) {
-        gf::Log::debug("- %s\n", name.c_str());
-      }
-
-      std::array<CityState, CityCount> cities;
-      std::array<gf::Vector2i, CityCount> positions;
-
-      for (;;) {
-        for (std::size_t i = 0; i < CityCount; ++i) {
-          positions[i] = random.computePosition(gf::RectI::fromSize(raw.getSize() - 1).shrink(CityRadius));
-        }
-
-        int minDistance = std::numeric_limits<int>::max();
-
-        for (std::size_t i = 0; i < CityCount; ++i) {
-          for (std::size_t j = i + 1; j < CityCount; ++j) {
-            int distance = gf::manhattanDistance(positions[i], positions[j]);
-            minDistance = std::min(minDistance, distance);
+        for (gf::Vector2i neighbor : cells.get24NeighborsRange(position)) {
+          if (cells(neighbor).type == CellType::Ground) {
+            ++count;
           }
         }
 
-        if (minDistance > CityMinDistanceFromOther) {
-          break;
+        return count == 24;
+      }
+
+      bool isFarFromProducers(gf::Vector2i position, int minDistance)
+      {
+        for (auto& producer : m_state.producers) {
+          if (gf::squareDistance(producer.spot.position, position) < gf::square(minDistance)) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      void computeProducers()
+      {
+        std::array<BubbleType, CityCount> types = { BubbleType::Red, BubbleType::Blue, BubbleType::Green, BubbleType::Yellow };
+        std::shuffle(types.begin(), types.end(), m_random.getEngine());
+
+        for (int i = 0; i < ProducerCount; ++i) {
+          for (;;) {
+            const gf::Vector2i position = m_random.computePosition(gf::RectI::fromSize(MapSize - 1));
+
+            if (!isLargeGround(position)) {
+              continue;
+            }
+
+            if (!isFarFromProducers(position, ProducerMinDistanceFromOther)) {
+              continue;
+            }
+
+            BubbleProducerState producer = {};
+            producer.status = BubbleProducerStatus::Growing;
+            producer.spot = position;
+            producer.minSize = BubbleMinSize;
+            producer.maxSize = BubbleMaxSize;
+            producer.growthRate = ProducerGrowRate;
+            producer.size = m_random.computeUniformFloat(producer.minSize, producer.maxSize);
+            producer.tile = m_random.computeUniformInteger(0, 2);
+
+            auto iterator = std::min_element(m_state.cities.begin(), m_state.cities.end(), [&](const CityState& lhs, const CityState& rhs) {
+              return gf::manhattanDistance(lhs.spot.position, position) < gf::manhattanDistance(rhs.spot.position, position);
+            });
+
+            producer.type = types[std::distance(m_state.cities.begin(), iterator)];
+
+            m_state.producers.push_back(std::move(producer));
+            break;
+          }
         }
       }
 
-      static_assert(CityCount < 26);
+      void computeTiles()
+      {
+        auto& cells = m_state.map.cells;
 
-      for (std::size_t i = 0; i < CityCount; ++i) {
-        cities[i].name = names[i];
-        cities[i].location = (positions[i] + 0.5f) * TileSize;
+        for (gf::Vector2i position : cells.getPositionRange()) {
+          if (position.y > 0 && cells(position).type == CellType::Block && cells({ position.x, position.y + 1 }).type == CellType::Ground) {
+            cells(position).type = CellType::Cliff;
 
-        std::vector<gf::Vector2i> points;
-        points.push_back(positions[i]);
+            if (m_random.computeBernoulli(0.95)) {
+              cells(position).tile = 0;
+            } else {
+              cells(position).tile = m_random.computeUniformInteger(1, 6);
+            }
+          } else if (cells(position).type == CellType::Ground) {
 
-        for (int radius = 1; radius <= CityRadius; ++radius) {
-          auto circle = generateCircle(positions[i], radius);
-          points.insert(points.end(), circle.begin(), circle.end());
+            if (m_random.computeBernoulli(0.95)) {
+              cells(position).tile = 0;
+            } else {
+              cells(position).tile = m_random.computeUniformInteger(1, 18);
+            }
+          }
         }
-
-        for (auto point : points) {
-          raw(point) = RawCell::Block;
-        }
-
-        // Set gates
-        auto setGate = [&](const auto& position, int gateIndex) -> void {
-          raw(position) = RawCell::Gate;
-          cities[i].gates[gateIndex] = (position + 0.5f) * TileSize; // West
-        };
-
-        setGate(positions[i] + gf::vec(-CityRadius, 0), 0); // West
-        setGate(positions[i] + gf::vec(0,  CityRadius), 1); // South
-        setGate(positions[i] + gf::vec( CityRadius, 0), 2); // East
       }
 
-      return cities;
-    }
+      GameState& m_state;
+      gf::Random& m_random;
+      std::vector<std::string> m_data;
+    };
 
   }
 
   GameState generateNewGame(gf::Random& random, gf::ResourceManager& resources)
   {
     gf::Log::debug("Generate raw map\n");
-    auto raw = generateRawMap(random);
 
     GameState state = {};
-    gf::Log::debug("Compute cities\n");
-    state.cities = computeCities(raw, random, resources);
-    gf::Log::debug("Sanitize raw map\n");
-    sanitizeMap(raw);
 
-    gf::Log::debug("Transform raw map\n");
-    state.map.cells = transformRawMap(raw, random);
-    gf::Log::debug("Compute start point\n");
-    std::tie(state.contract, state.hero) = computeStartPoint(raw, state.cities, random);
-    gf::Log::debug("Compute producers\n");
-    state.producers = computeProducers(raw, state.cities, random);
+    Generator generator(state, random, resources);
+    generator.run();
 
     gf::Log::debug("Initialize physics\n");
     state.initializePhysics();
