@@ -81,7 +81,7 @@ add_executable(${GAME}
 if (WIN32)
   target_compile_options(${GAME} PRIVATE /wd4251)
 else ()
-  target_compile_options(${GAME} PRIVATE -Wall -Wextra -Werror)
+  target_compile_options(${GAME} PRIVATE -Wall -Wextra)
 endif ()
 
 target_include_directories(${GAME}

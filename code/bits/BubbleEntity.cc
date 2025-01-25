@@ -1,6 +1,7 @@
 #include "BubbleEntity.h"
 
 #include <cassert>
+#include <gf/AnimatedSprite.h>
 #include <gf/RenderTarget.h>
 #include <gf/Sprite.h>
 
@@ -11,30 +12,41 @@ namespace be {
   BubbleEntity::BubbleEntity(GameHub& game)
   : m_state(game.state)
   , m_producerTexture(game.resources.getTexture("producers.png"))
-  , m_redBubbleTexture(game.resources.getTexture("redBubble.png"))
-  , m_blueBubbleTexture(game.resources.getTexture("blueBubble.png"))
-  , m_greenBubbleTexture(game.resources.getTexture("greenBubble.png"))
-  , m_yellowBubbleTexture(game.resources.getTexture("yellowBubble.png"))
+  , m_redBubbleTexture(game.resources.getTexture("animation/bubble_red.png"))
+  , m_blueBubbleTexture(game.resources.getTexture("animation/bubble_blue.png"))
+  , m_greenBubbleTexture(game.resources.getTexture("animation/bubble_green.png"))
+  , m_yellowBubbleTexture(game.resources.getTexture("animation/bubble_yellow.png"))
   {
+    m_redBubbleAnimation.addTileset(m_redBubbleTexture, gf::vec(8, 8), gf::seconds(1.0f / 25.0f), 64);
+    m_blueBubbleAnimation.addTileset(m_blueBubbleTexture, gf::vec(8, 8), gf::seconds(1.0f / 25.0f), 64);
+    m_greenBubbleAnimation.addTileset(m_greenBubbleTexture, gf::vec(8, 8), gf::seconds(1.0f / 25.0f), 64);
+    m_yellowBubbleAnimation.addTileset(m_yellowBubbleTexture, gf::vec(8, 8), gf::seconds(1.0f / 25.0f), 64);
+  }
+
+  void BubbleEntity::update(gf::Time time) {
+    m_redBubbleAnimation.update(time);
+    m_blueBubbleAnimation.update(time);
+    m_greenBubbleAnimation.update(time);
+    m_yellowBubbleAnimation.update(time);
   }
 
   void BubbleEntity::render(gf::RenderTarget &target, const gf::RenderStates &states)
   {
-    gf::Sprite bubbleSprite;
+    gf::AnimatedSprite bubbleSprite;
 
     auto drawBubble = [&](const gf::Vector2f& position, float size, BubbleType type, gf::Anchor anchor) -> void {
       switch (type) {
       case BubbleType::Red:
-        bubbleSprite.setTexture(m_redBubbleTexture);
+        bubbleSprite.setAnimation(m_redBubbleAnimation);
         break;
       case BubbleType::Green:
-        bubbleSprite.setTexture(m_greenBubbleTexture);
+        bubbleSprite.setAnimation(m_blueBubbleAnimation);
         break;
       case BubbleType::Blue:
-        bubbleSprite.setTexture(m_blueBubbleTexture);
+        bubbleSprite.setAnimation(m_greenBubbleAnimation);
         break;
       case BubbleType::Yellow:
-        bubbleSprite.setTexture(m_yellowBubbleTexture);
+        bubbleSprite.setAnimation(m_yellowBubbleAnimation);
         break;
 
       case BubbleType::None:

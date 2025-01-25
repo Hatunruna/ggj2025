@@ -27,7 +27,7 @@ namespace be {
     constexpr cpFloat MapRadius = 0.1;
 
     constexpr cpFloat BubbleMass = 1.0;
-    constexpr cpFloat BubbleRadius = 64.0;
+    constexpr cpFloat BubbleRadius = 100.0;
     constexpr cpFloat BubbleRelaxation = 1.5;
 
     constexpr float ProducerDistance = HeroRadius + ProducerRadius + 50.0f;
