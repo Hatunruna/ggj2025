@@ -243,9 +243,9 @@ namespace be {
           BubbleProducerState state = {};
           state.status = BubbleProducerStatus::Growing;
           state.location = location;
-          state.minSize = 0.1f;
-          state.maxSize = 1.0f;
-          state.growthRate = 0.02f;
+          state.minSize = BubbleMinSize;
+          state.maxSize = BubbleMaxSize;
+          state.growthRate = ProducerGrowRate;
           state.size = random.computeUniformFloat(state.minSize, state.maxSize);
 
           producers.push_back(std::move(state));

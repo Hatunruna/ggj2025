@@ -57,8 +57,6 @@ namespace be {
       drawBubble(producer.location, producer.size, producer.type, gf::Anchor::BottomCenter);
     }
 
-    bubbleSprite.setAnchor(gf::Anchor::Center);
-
     for (auto& bubble : m_state.bubbles) {
       cpVect location = cpBodyGetPosition(bubble.body);
 
