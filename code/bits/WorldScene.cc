@@ -19,6 +19,8 @@ namespace be {
   , m_heroEntity(game)
   , m_bubbleEntity(game)
   , m_cityEntity(game)
+  , m_heroHudEntity(game)
+  , m_feedbackEntity(game)
   , m_physicsDebug(game)
   , m_adaptor(game.getRenderer(), getWorldView())
   {
@@ -72,6 +74,9 @@ namespace be {
 
     setWorldViewSize({ 512, 512 });
     setWorldViewCenter(game.state.hero.location);
+
+    addHudEntity(m_heroHudEntity);
+    addHudEntity(m_feedbackEntity);
   }
 
   void WorldScene::doProcessEvent(gf::Event& event)

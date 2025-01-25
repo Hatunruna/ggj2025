@@ -1,6 +1,8 @@
 #include "GameState.h"
 
-#include "chipmunk/chipmunk.h"
+#include <cmath>
+
+#include <chipmunk/chipmunk.h>
 
 #include <gf/Log.h>
 #include <gf/Geometry.h>
@@ -10,6 +12,7 @@
 #include <gf/Streams.h>
 #include <gf/VectorOps.h>
 
+#include "ContractState.h"
 #include "MapSettings.h"
 
 namespace be {
@@ -297,11 +300,27 @@ namespace be {
         continue;
       }
 
-      gf::Log::debug("Entering the city\n");
-      return true;
+      const float bubbleValue = computeBubblesValues();
+      if (bubbleValue >= contract.bubbleValueTarget) {
+        gf::Log::debug("Entering the city\n");
+        return true;
+      } else {
+        feedback.message = "You need more bubbles!";
+        feedback.time.restart();
+      }
     }
 
     return false;
+  }
+
+  float GameState::computeBubblesValues()
+  {
+    float value = 0.0f;
+    for (const auto& bubble: bubbles) {
+      value += bubble.size * BubbleBaseValue;
+    }
+
+    return std::round(value);
   }
 
   void GameState::update(gf::Time time)

@@ -12,6 +12,7 @@
 #include "BubbleState.h"
 #include "CityState.h"
 #include "ContractState.h"
+#include "FeedbackState.h"
 #include "HeroState.h"
 #include "MapState.h"
 #include "PhysicsModel.h"
@@ -33,6 +34,7 @@ namespace be {
     std::vector<BubbleState> free_bubbles;
     std::array<CityState, CityCount> cities;
     ContractState contract;
+    FeedbackState feedback;
     float contractProgress = ContractStep;
 
     void initializePhysics();
@@ -42,6 +44,8 @@ namespace be {
     void tryToTakeBubble();
     void releaseBubble();
     bool tryToEnterCity();
+
+    float computeBubblesValues();
 
     void update(gf::Time time);
 

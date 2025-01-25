@@ -54,10 +54,12 @@ add_executable(${GAME}
   code/bits/ContractScene.cc
   code/bits/ContractSelectionEntity.cc
   code/bits/ContractState.cc
+  code/bits/FeedbackEntity.cc
   code/bits/GameData.cc
   code/bits/GameHub.cc
   code/bits/GameState.cc
   code/bits/HeroEntity.cc
+  code/bits/HeroHudEntity.cc
   code/bits/HeroReportEntity.cc
   code/bits/HeroState.cc
   code/bits/LoreEndEntity.cc

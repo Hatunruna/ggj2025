@@ -6,7 +6,9 @@
 
 #include "BubbleEntity.h"
 #include "CityEntity.h"
+#include "FeedbackEntity.h"
 #include "HeroEntity.h"
+#include "HeroHudEntity.h"
 #include "MapEntity.h"
 #include "PhysicsDebug.h"
 
@@ -38,6 +40,9 @@ namespace be {
     HeroEntity m_heroEntity;
     BubbleEntity m_bubbleEntity;
     CityEntity m_cityEntity;
+
+    HeroHudEntity m_heroHudEntity;
+    FeedbackEntity m_feedbackEntity;
 
     PhysicsDebug m_physicsDebug;
 
