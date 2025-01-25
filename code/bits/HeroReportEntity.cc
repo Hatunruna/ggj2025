@@ -25,7 +25,7 @@ namespace be {
     constexpr float spaceBetweenButton = 0.10f;
     constexpr gf::Vector2f backgroundSize(0.35f, 0.40f);
 
-    gf::Text currentCity("You are at " + m_state.cities[m_state.contract.originCity].name, m_font, relativeCharacterSize * 0.90);
+    gf::Text currentCity("You are at " + m_state.cities[m_state.contract.targetCity].name, m_font, relativeCharacterSize * 0.90);
     currentCity.setAnchor(gf::Anchor::Center);
     currentCity.setColor(gf::Color::White);
     currentCity.setPosition(coords.getRelativePoint(gf::vec(0.25f, ButtonStartPoint.y)));
