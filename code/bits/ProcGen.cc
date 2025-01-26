@@ -390,7 +390,7 @@ namespace be {
             if (m_random.computeBernoulli(0.95)) {
               cells(position).tile = 0;
             } else {
-              cells(position).tile = m_random.computeUniformInteger(1, 18);
+              cells(position).tile = m_random.computeUniformInteger(1, GroundTilesetWidth - 1);
             }
           }
         }
