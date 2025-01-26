@@ -11,6 +11,7 @@
 
 #include "GameHub.h"
 #include "GameState.h"
+#include "bits/HeroState.h"
 
 namespace be {
   HeroHudEntity::HeroHudEntity(GameHub& game)
@@ -74,7 +75,7 @@ namespace be {
     contractBubble.scale(HeroHudBubbleScale);
     target.draw(contractBubble, states);
 
-    text.setString("HP " + std::to_string(m_state.hero.life) + " / " + std::to_string(m_state.hero.life));
+    text.setString("HP " + std::to_string(m_state.hero.life) + " / " + std::to_string(HeroMaxHealth));
     text.setAnchor(gf::Anchor::Center);
     text.setPosition(coords.getRelativePoint({0.165f, 0.18f}));
     target.draw(text, states);
