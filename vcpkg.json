@@ -6,6 +6,7 @@
     "chipmunk",
     "freetype",
     "pugixml",
+    "sfml",
     "sdl2",
     "zlib"
   ]
