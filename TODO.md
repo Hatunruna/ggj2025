@@ -14,8 +14,8 @@
 ## Code
 
 - bubbles
-  - limit to 5
-  - cooldown after bubble explosion
+  - limit to 5 -> done
+  - cooldown after bubble explosion -> done
 - physics
   - make bubble more stable
   - performance: look at spatial hash: https://chipmunk-physics.net/release/ChipmunkLatest-Docs/#cpSpace-SpatialHash

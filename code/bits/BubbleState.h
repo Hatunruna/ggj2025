@@ -30,9 +30,10 @@ namespace be {
   };
 
   constexpr gf::Time ExplosionLifetime = gf::seconds(2.0);
+  constexpr gf::Time ProducerCooldown = gf::seconds(60.0f);
   constexpr float BubbleMaxSize = 0.5f;
   constexpr float BubbleMinSize = 0.1f;
-  constexpr float ProducerGrowRate = 0.2f;
+  constexpr float ProducerGrowRate = 0.02f;
 
   struct BubbleProducerState {
     BubbleProducerStatus status = BubbleProducerStatus::Emerging;

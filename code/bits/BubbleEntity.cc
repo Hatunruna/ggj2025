@@ -5,6 +5,7 @@
 #include <gf/RenderTarget.h>
 #include <gf/Sprite.h>
 
+#include "BubbleState.h"
 #include "GameHub.h"
 
 namespace be {
@@ -65,6 +66,10 @@ namespace be {
       producerSprite.setPosition(producer.spot.location);
       producerSprite.setScale(0.4f);
       target.draw(producerSprite, states);
+
+      if (producer.status == BubbleProducerStatus::Emerging) {
+        continue;
+      }
 
       drawBubble(producer.spot.location, producer.size, producer.type, gf::Anchor::BottomCenter);
     }

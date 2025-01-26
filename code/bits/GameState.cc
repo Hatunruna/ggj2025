@@ -11,11 +11,13 @@
 #include <gf/Serialization.h>
 #include <gf/SerializationOps.h>
 #include <gf/Streams.h>
+#include <gf/Time.h>
 #include <gf/VectorOps.h>
 
+#include "BubbleState.h"
 #include "ContractState.h"
+#include "HeroState.h"
 #include "MapSettings.h"
-#include "bits/HeroState.h"
 
 namespace be {
 
@@ -259,6 +261,7 @@ namespace be {
       bubbles.push_back(bubble);
 
       producer.status = BubbleProducerStatus::Emerging;
+      producer.lifetime = gf::Time::zero();
       return;
     }
 
@@ -371,9 +374,11 @@ namespace be {
 
       switch (producer.status) {
         case BubbleProducerStatus::Emerging:
-          producer.size = producer.minSize;
-          producer.status = BubbleProducerStatus::Growing;
-          producer.lifetime = gf::Time::zero();
+          if (producer.lifetime >= ProducerCooldown) {
+            producer.size = producer.minSize;
+            producer.status = BubbleProducerStatus::Growing;
+            producer.lifetime = gf::Time::zero();
+          }
           break;
 
         case BubbleProducerStatus::Growing:
@@ -388,7 +393,8 @@ namespace be {
         case BubbleProducerStatus::Exploding:
           if (producer.lifetime > ExplosionLifetime) {
             producer.lifetime = gf::Time::zero();
-            producer.status = BubbleProducerStatus::Emerging;
+            producer.size = producer.minSize;
+            producer.status = BubbleProducerStatus::Growing;
           }
           break;
       }
