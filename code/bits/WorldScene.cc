@@ -16,6 +16,7 @@ namespace be {
   , m_releaseAction("release")
   , m_debugAction("debug")
   , m_mapEntity(game)
+  , m_trapEntity(game)
   , m_heroEntity(game)
   , m_bubbleEntity(game)
   , m_cityEntity(game)
@@ -66,6 +67,7 @@ namespace be {
     addModel(game.state);
 
     addWorldEntity(m_mapEntity);
+    addWorldEntity(m_trapEntity);
     addWorldEntity(m_heroEntity);
     addWorldEntity(m_bubbleEntity);
     addWorldEntity(m_cityEntity);

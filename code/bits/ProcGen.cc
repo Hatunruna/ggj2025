@@ -13,8 +13,9 @@
 
 #include <gf/Direction.h>
 #include <gf/Log.h>
-#include <gf/VectorOps.h>
 #include <gf/Map.h>
+#include <gf/VectorOps.h>
+#include <gf/Vector.h>
 
 #include "CityState.h"
 #include "ContractState.h"
@@ -22,8 +23,8 @@
 #include "MapSettings.h"
 #include "MapState.h"
 #include "Namegen.h"
+#include "TrapState.h"
 #include "Support.h"
-#include "gf/Vector.h"
 
 namespace be {
 
@@ -40,6 +41,10 @@ namespace be {
 
     constexpr int ProducerCount = 100;
     constexpr int ProducerMinDistanceFromOther = 32;
+
+    // traps settings
+    constexpr int TrapCount = 50;
+    constexpr int TrapMinDistanceFromOther = 32;
 
     // cities settings
 
@@ -154,6 +159,7 @@ namespace be {
 
         computeStartPoint();
         computeProducers();
+        computeTraps();
         computeTiles();
 
       }
@@ -441,6 +447,40 @@ namespace be {
           }
 
           city.center = center / static_cast<float>(count);
+        }
+      }
+
+      bool isFarFromTraps(gf::Vector2i position, int minDistance)
+      {
+        for (auto& trap : m_state.traps) {
+          if (gf::squareDistance(trap.spot.position, position) < gf::square(minDistance)) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      void computeTraps()
+      {
+        for (int i = 0; i < TrapCount; ++i) {
+          for (;;) {
+            const gf::Vector2i position = m_random.computePosition(gf::RectI::fromSize(MapSize - 1));
+
+            if (!isLargeGround(position)) {
+              continue;
+            }
+
+            if (!isFarFromTraps(position, TrapMinDistanceFromOther)) {
+              continue;
+            }
+
+            TrapState trap = {};
+            trap.spot = position;
+
+            m_state.traps.push_back(std::move(trap));
+            break;
+          }
         }
       }
 

@@ -77,6 +77,8 @@ add_executable(${GAME}
   code/bits/StartScene.cc
   code/bits/Support.cc
   code/bits/TitleEntity.cc
+  code/bits/TrapEntity.cc
+  code/bits/TrapState.cc
   code/bits/WorldScene.cc
 )
 

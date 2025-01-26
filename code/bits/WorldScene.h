@@ -12,6 +12,7 @@
 #include "MapEntity.h"
 #include "MountainsEntity.h"
 #include "PhysicsDebug.h"
+#include "TrapEntity.h"
 
 namespace be {
   struct GameHub;
@@ -38,6 +39,7 @@ namespace be {
     gf::Action m_debugAction;
 
     MapEntity m_mapEntity;
+    TrapEntity m_trapEntity;
     HeroEntity m_heroEntity;
     BubbleEntity m_bubbleEntity;
     CityEntity m_cityEntity;

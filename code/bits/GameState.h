@@ -16,6 +16,7 @@
 #include "HeroState.h"
 #include "MapState.h"
 #include "PhysicsModel.h"
+#include "TrapState.h"
 
 namespace be {
 
@@ -36,6 +37,7 @@ namespace be {
     ContractState contract;
     FeedbackState feedback;
     float contractProgress = ContractStep;
+    std::vector<TrapState> traps;
 
     void initializePhysics();
 
