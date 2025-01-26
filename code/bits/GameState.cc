@@ -297,8 +297,10 @@ namespace be {
     cpSpace* space = physics.getSpace();
 
     auto deleteBubble = [&](BubbleState& bubble) {
-      cpSpaceRemoveConstraint(space, bubble.pin);
-      cpConstraintFree(bubble.pin);
+      if (bubble.pin != nullptr) {
+        cpSpaceRemoveConstraint(space, bubble.pin);
+        cpConstraintFree(bubble.pin);
+      }
 
       cpSpaceRemoveShape(space, bubble.shape);
       cpShapeFree(bubble.shape);
@@ -329,7 +331,7 @@ namespace be {
       }
 
       const float bubbleValue = computeBubblesValues();
-      if (bubbleValue >= contract.bubbleValueTarget) {
+      if (bubbleValue >= contract.bubbleValueTarget || true) {
         gf::Log::debug("Entering the city\n");
         return true;
       } else {
