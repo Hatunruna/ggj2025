@@ -15,16 +15,13 @@
 
 - bubbles
   - desync animations
-  - bubbles in line
 - hero
   - render arrows in their own entities
+  - render only one arrow (and remove it when arriving near target)
 - physics
-  - make bubble more stable
   - performance: look at spatial hash: https://chipmunk-physics.net/release/ChipmunkLatest-Docs/#cpSpace-SpatialHash
 - minimap
-  - display hero
 - procgen
-  - move gates generation after sanitize
 - contracts
 - generation
 - end of game
