@@ -16,7 +16,7 @@ namespace be {
 
   private:
     gf::Font& m_font;
-//     gf::Texture& m_backgroundTexture;
+    gf::Texture& m_backgroundTexture;
   };
 
 
