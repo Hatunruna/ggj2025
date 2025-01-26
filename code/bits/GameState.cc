@@ -32,7 +32,7 @@ namespace be {
 
     constexpr cpFloat MapRadius = 0.1;
 
-    constexpr cpFloat BubbleMass = 1.0;
+    constexpr cpFloat BubbleMass = 10.0;
     constexpr cpFloat BubbleRadius = 100.0;
     constexpr cpFloat BubbleRelaxation = 1.5;
 
@@ -125,7 +125,7 @@ namespace be {
     cpSpaceAddBody(space, bubble.body);
 
     bubble.shape = cpCircleShapeNew(bubble.body, bubble.size * BubbleRadius, cpvzero);
-    cpShapeSetElasticity(bubble.shape, 0.0f);
+    cpShapeSetElasticity(bubble.shape, 0.5f);
     cpShapeSetFriction(bubble.shape, 0.7f);
     cpSpaceAddShape(space, bubble.shape);
 
@@ -214,8 +214,11 @@ namespace be {
      * Bubbles
      */
 
+    cpBody* previous = hero.body;
+
     for (auto& bubble : bubbles) {
-      initializeBubblePhysics(bubble, space, cpvzero, hero.body);
+      initializeBubblePhysics(bubble, space, cpvzero, previous);
+      previous = bubble.body;
     }
 
   }
@@ -271,7 +274,7 @@ namespace be {
       bubble.type = producer.type;
 
       const gf::Vector2f location = producer.spot.location - gf::diry(bubble.size * BubbleRadius);
-      initializeBubblePhysics(bubble, space, cpv(location.x, location.y), hero.body);
+      initializeBubblePhysics(bubble, space, cpv(location.x, location.y), bubbles.empty() ? hero.body : bubbles.back().body);
 
       bubbles.push_back(bubble);
 
@@ -291,7 +294,7 @@ namespace be {
       BubbleState bubble = *iterator;
       freeBubbles.erase(iterator);
 
-      attacheBubbleTo(bubble, space, hero.body);
+      attacheBubbleTo(bubble, space, bubbles.empty() ? hero.body : bubbles.back().body);
 
       bubbles.push_back(bubble);
       return;
