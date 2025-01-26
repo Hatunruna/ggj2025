@@ -21,6 +21,7 @@
 #include "MapState.h"
 #include "Namegen.h"
 #include "Support.h"
+#include "gf/Vector.h"
 
 namespace be {
 
@@ -200,6 +201,9 @@ namespace be {
 
       void generateCities()
       {
+        std::array<BubbleType, CityCount> types = { BubbleType::Red, BubbleType::Blue, BubbleType::Green, BubbleType::Yellow };
+        std::shuffle(types.begin(), types.end(), m_random.getEngine());
+
         // positions
 
         std::array<gf::Vector2i, CityCount> positions;
@@ -243,6 +247,7 @@ namespace be {
         for (std::size_t i = 0; i < CityCount; ++i) {
           m_state.cities[i].name = names[i];
           m_state.cities[i].spot = positions[i];
+          m_state.cities[i].type = types[i];
 
           std::vector<gf::Vector2i> points;
           points.push_back(positions[i]);
@@ -336,9 +341,6 @@ namespace be {
 
       void computeProducers()
       {
-        std::array<BubbleType, CityCount> types = { BubbleType::Red, BubbleType::Blue, BubbleType::Green, BubbleType::Yellow };
-        std::shuffle(types.begin(), types.end(), m_random.getEngine());
-
         for (int i = 0; i < ProducerCount; ++i) {
           for (;;) {
             const gf::Vector2i position = m_random.computePosition(gf::RectI::fromSize(MapSize - 1));
@@ -364,11 +366,27 @@ namespace be {
               return gf::manhattanDistance(lhs.spot.position, position) < gf::manhattanDistance(rhs.spot.position, position);
             });
 
-            producer.type = types[std::distance(m_state.cities.begin(), iterator)];
+            producer.type = iterator->type;
 
             m_state.producers.push_back(std::move(producer));
             break;
           }
+        }
+
+        // compute the center of the dependent bubbles
+
+        for (auto& city : m_state.cities) {
+          gf::Vector2f center = { 0.0f, 0.0f };
+          std::size_t count = 0;
+
+          for (auto& producer : m_state.producers) {
+            if (producer.type == city.type) {
+              center += producer.spot.location;
+              ++count;
+            }
+          }
+
+          city.center = center / static_cast<float>(count);
         }
       }
 

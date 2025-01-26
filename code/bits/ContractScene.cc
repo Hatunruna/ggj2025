@@ -74,20 +74,23 @@ namespace be {
 
     m_game.state.contractProgress = gf::clamp(m_game.state.contractProgress + ContractStep, ContractStep, ContractMaxStep);
 
+    std::vector<std::size_t> nextCities;
+
+    for (int i = 0; i < int(CityCount); ++i) {
+      if (i != previousContract.targetCity) {
+        nextCities.push_back(i);
+      }
+    }
+
+    std::shuffle(nextCities.begin(), nextCities.end(), m_game.random.getEngine());
+
     for (int i = 0; i < int(m_nextContracts.size()); ++i) {
       auto& nextContract = m_nextContracts[i];
       nextContract.originCity = previousContract.targetCity;
       nextContract.bubbleValueTarget = std::round(m_game.random.computeUniformFloat((m_game.state.contractProgress - 0.1f) * MaxContract, m_game.state.contractProgress * MaxContract));
-      if (i < nextContract.originCity) {
-        nextContract.targetCity = i;
-      } else {
-        nextContract.targetCity = i + 1;
-      }
-      int typeIndex = m_game.random.computeUniformInteger(static_cast<size_t>(0), CityCount - 1);
-      if (typeIndex == nextContract.targetCity) {
-        typeIndex = (typeIndex + 1) % CityCount;
-      }
-      nextContract.type = static_cast<BubbleType>(typeIndex);
+
+      nextContract.targetCity = nextCities[i];
+      nextContract.type = m_game.state.cities[nextCities[(i + 1) % nextCities.size()]].type;
       assert(nextContract.type != BubbleType::None);
     }
 

@@ -6,6 +6,7 @@
 
 #include <gf/Vector.h>
 
+#include "BubbleState.h"
 #include "Spot.h"
 
 namespace be {
@@ -16,6 +17,8 @@ namespace be {
   struct CityState {
     std::string name;
     Spot spot;
+    BubbleType type = BubbleType::None;
+    gf::Vector2f center;
     std::vector<Spot> gates;
   };
 
