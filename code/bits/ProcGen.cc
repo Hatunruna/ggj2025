@@ -13,6 +13,7 @@
 #include <gf/Direction.h>
 #include <gf/Log.h>
 #include <gf/VectorOps.h>
+#include <gf/Map.h>
 
 #include "CityState.h"
 #include "ContractState.h"
@@ -294,9 +295,61 @@ namespace be {
         sanitizer.run();
       }
 
+      void digPath(const std::vector<gf::Vector2i>& path)
+      {
+        auto& cells = m_state.map.cells;
+
+        assert(!path.empty());
+
+        for (auto position : path) {
+          for (auto neighbor : cells.get8NeighborsRange(position)) {
+            cells(neighbor).type = CellType::Ground;
+          }
+        }
+      }
+
       void generatePaths()
       {
-        // TODO
+        auto& cells = m_state.map.cells;
+
+        gf::SquareMap map(m_state.map.cells.getSize());
+
+        for (auto position : cells.getPositionRange()) {
+          if (cells(position).type == CellType::Ground) {
+            map.setEmpty(position);
+          }
+        }
+
+        for (auto& city : m_state.cities) {
+          for (std::size_t i = 0; i < city.gates.size(); ++i) {
+            if (i + 1 < city.gates.size()) {
+              auto path = map.computeRoute(city.gates[i].position, city.gates[i + 1].position);
+              digPath(path);
+            }
+          }
+        }
+
+        const gf::Vector2f mapCenter = MapSize / 2 * TileSize;
+
+        std::vector<std::size_t> cities(CityCount);
+        std::iota(cities.begin(), cities.end(), 0);
+
+        std::sort(cities.begin(), cities.end(), [&](std::size_t lhs, std::size_t rhs) {
+          return gf::angle(m_state.cities[lhs].spot.location - mapCenter) < gf::angle(m_state.cities[rhs].spot.location - mapCenter);
+        });
+
+        for (auto index : cities) {
+          const std::size_t originGate = m_random.computeUniformInteger(std::size_t(0), m_state.cities[index].gates.size() - 1);
+          const gf::Vector2i origin = m_state.cities[index].gates[originGate].position;
+
+          const std::size_t nextIndex = (index + 1) % cities.size();
+          const std::size_t targetGate = m_random.computeUniformInteger(std::size_t(0), m_state.cities[nextIndex].gates.size() - 1);
+          const gf::Vector2i target = m_state.cities[nextIndex].gates[targetGate].position;
+
+          auto path = map.computeRoute(origin, target);
+          digPath(path);
+        }
+
       }
 
       void computeStartPoint()
