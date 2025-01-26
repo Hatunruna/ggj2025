@@ -43,7 +43,7 @@ namespace be {
     constexpr int ProducerMinDistanceFromOther = 32;
 
     // traps settings
-    constexpr int TrapCount = 50;
+    constexpr int TrapCount = 150;
     constexpr int TrapMinDistanceFromOther = 32;
 
     // cities settings
