@@ -3,6 +3,7 @@
 
 #include <gf/GameManager.h>
 
+#include "AudioManager.h"
 #include "GameData.h"
 #include "GameState.h"
 #include "ContractScene.h"
@@ -17,6 +18,8 @@ namespace be {
 
     GameData data;
     GameState state;
+
+    AudioManager audio;
 
     StartScene start;
     LoreScene lore;

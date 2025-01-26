@@ -25,6 +25,7 @@ namespace be {
   , m_feedbackEntity(game)
   , m_physicsDebug(game)
   , m_adaptor(game.getRenderer(), getWorldView())
+  , m_ambianceMusic(game.audio.getMusic("sounds/stage.ogg"))
   {
     setClearColor(gf::Color::Black);
 
@@ -80,6 +81,9 @@ namespace be {
 
     addHudEntity(m_heroHudEntity);
     addHudEntity(m_feedbackEntity);
+
+    m_ambianceMusic.setLoop(true);
+    m_ambianceMusic.play();
   }
 
   void WorldScene::doProcessEvent(gf::Event& event)

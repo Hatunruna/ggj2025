@@ -1,6 +1,7 @@
 #ifndef BE_WORLD_SCENE_H
 #define BE_WORLD_SCENE_H
 
+#include <SFML/Audio.hpp>
 #include <gf/Scene.h>
 #include <gf/Views.h>
 
@@ -52,6 +53,7 @@ namespace be {
 
     gf::ZoomingViewAdaptor m_adaptor;
 
+    sf::Music& m_ambianceMusic;
   };
 
 }

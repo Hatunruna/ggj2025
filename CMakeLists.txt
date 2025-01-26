@@ -8,6 +8,10 @@ project(${GAME}
 
 include(GNUInstallDirs)
 
+if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  find_package(SFML REQUIRED COMPONENTS audio)
+endif()
+
 if (CMAKE_TOOLCHAIN_FILE MATCHES "vcpkg.cmake$")
   find_package(unofficial-chipmunk CONFIG REQUIRED)
   set(CHIPMUNK_LIBS unofficial::chipmunk::chipmunk)
@@ -47,6 +51,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/code/config.h.in ${CMAKE_CURRENT_BINA
 
 add_executable(${GAME}
   code/main.cc
+  code/bits/AudioManager.cc
   code/bits/BubbleEntity.cc
   code/bits/BubbleState.cc
   code/bits/CityEntity.cc
@@ -88,6 +93,11 @@ else ()
   target_compile_options(${GAME} PRIVATE -Wall -Wextra)
 endif ()
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  target_compile_options(${GAME} PRIVATE -I/opt/homebrew/opt/sfml@2/include)
+  target_link_options(${GAME} PRIVATE -L/opt/homebrew/opt/sfml@2/lib)
+endif()
+
 target_include_directories(${GAME}
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/code
@@ -98,6 +108,7 @@ target_link_libraries(${GAME}
   PRIVATE
     gf0
     ${CHIPMUNK_LIBS}
+    sfml-audio
 )
 
 add_executable(generate-raw-tileset
