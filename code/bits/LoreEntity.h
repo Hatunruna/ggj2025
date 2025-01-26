@@ -16,6 +16,7 @@ namespace be {
   private:
     GameHub& m_game;
     gf::Font& m_font;
+    gf::Texture& m_backgroundTexture;
   };
 
 }

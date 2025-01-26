@@ -12,6 +12,7 @@ namespace be {
   : m_font(resources.getFont("GoudyBookletter1911.otf"))
   , m_backgroundTexture(resources.getTexture("logo.jpg"))
   {
+    m_backgroundTexture.setSmooth();
   }
 
   void TitleEntity::update([[maybe_unused]] gf::Time time) {

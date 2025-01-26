@@ -2,12 +2,13 @@
 
 #include <string_view>
 
+#include <gf/Alignment.h>
 #include <gf/Coordinates.h>
 #include <gf/RenderTarget.h>
+#include <gf/Sprite.h>
 #include <gf/Text.h>
 
 #include "GameHub.h"
-#include "gf/Alignment.h"
 
 namespace be {
 
@@ -26,12 +27,23 @@ namespace be {
   LoreEntity::LoreEntity(GameHub& game)
   : m_game(game)
   , m_font(game.resources.getFont("DejaVuSans.ttf"))
+  , m_backgroundTexture(game.resources.getTexture("ui_background.jpg"))
   {
+    m_backgroundTexture.setSmooth();
   }
 
   void LoreEntity::render(gf::RenderTarget &target, const gf::RenderStates &states)
   {
     gf::Coordinates coords(target);
+
+    float backgroundHeight = coords.getRelativeSize(gf::vec(0.0f, 1.0f)).height;
+    float backgroundScale = backgroundHeight / m_backgroundTexture.getSize().height;
+
+    gf::Sprite background(m_backgroundTexture);
+    background.setPosition(coords.getCenter());
+    background.setAnchor(gf::Anchor::Center);
+    background.setScale(backgroundScale);
+    target.draw(background, states);
 
     constexpr float characterSize = 0.04f;
     const unsigned relativeCharacterSize = coords.getRelativeCharacterSize(characterSize);

@@ -17,6 +17,7 @@ namespace be {
   private:
     GameState& m_state;
     gf::Font& m_font;
+    gf::Texture& m_backgroundTexture;
   };
 
 }
