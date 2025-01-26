@@ -16,7 +16,7 @@ namespace be {
 
   void MapEntity::updateTiles()
   {
-    m_tiled.clear();
+    m_tiled = gf::TileLayer::createOrthogonal(MapSize, TileSize * 2);
 
     auto tilesetId = m_tiled.createTilesetId();
     auto& tileset = m_tiled.getTileset(tilesetId);
