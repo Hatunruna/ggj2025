@@ -32,7 +32,7 @@ namespace be {
           gf::Sprite sprite(m_texture, gf::RectF::fromPositionSize(gf::vec(TileWidth * cells(position).tile, 0.0f), {TileWidth, 1.0f}));
           sprite.setAnchor(gf::Anchor::TopLeft);
           sprite.setScale(0.5f);
-          sprite.setPosition((position + gf::vec(0, 0)) * TileSize);
+          sprite.setPosition((position - gf::vec(0, 3)) * TileSize);
           batch.draw(sprite, states);
           break;
       }
