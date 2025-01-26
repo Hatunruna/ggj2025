@@ -2,6 +2,7 @@
 
 #include <gf/Color.h>
 #include <gf/Coordinates.h>
+#include <gf/Direction.h>
 #include <gf/RenderTarget.h>
 #include <gf/Shapes.h>
 #include <gf/Sprite.h>
@@ -16,7 +17,36 @@ namespace be {
   : m_state(game.state)
   , m_texture(game.resources.getTexture("city.png"))
   , m_font(game.resources.getFont("DejaVuSans.ttf"))
+  , m_upGateTexture(game.resources.getTexture("door_up.png"))
+  , m_downGateTexture(game.resources.getTexture("door_down.png"))
+  , m_leftGateTexture(game.resources.getTexture("door_left.png"))
+  , m_rightGateTexture(game.resources.getTexture("door_right.png"))
   {
+  }
+
+  void CityEntity::getGateTexture(gf::Direction direction) {
+    switch (direction)
+    {
+    case gf::Direction::Up:
+      m_currentGateTexture = &m_upGateTexture;
+      break;
+    
+    case gf::Direction::Down:
+      m_currentGateTexture = &m_downGateTexture;
+      break;
+    
+    case gf::Direction::Left:
+      m_currentGateTexture = &m_leftGateTexture;
+      break;
+    
+    case gf::Direction::Right:
+      m_currentGateTexture = &m_rightGateTexture;
+      break;
+    
+    default:
+      assert(false);
+      break;
+    }
   }
 
   void CityEntity::render(gf::RenderTarget &target, const gf::RenderStates &states)
@@ -42,10 +72,10 @@ namespace be {
       target.draw(name, states);
 
       for (const auto& gateSpot: city.gates) {
-        gf::RectangleShape gate(TileSize);
+        getGateTexture(gateSpot.direction);
+        gf::Sprite gate(*m_currentGateTexture);
         gate.setAnchor(gf::Anchor::Center);
-        gate.setPosition(gateSpot.location);
-        gate.setColor(gf::Color::Cyan);
+        gate.setPosition(gateSpot.spot.location);
         target.draw(gate, states);
       }
     }

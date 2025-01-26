@@ -299,7 +299,7 @@ namespace be {
               }
 
               if (cells(current).type == CellType::Ground) {
-                city.gates.push_back(current);
+                city.gates.push_back({current, direction});
                 break;
               }
 
@@ -337,7 +337,7 @@ namespace be {
         for (auto& city : m_state.cities) {
           for (std::size_t i = 0; i < city.gates.size(); ++i) {
             if (i + 1 < city.gates.size()) {
-              auto path = map.computeRoute(city.gates[i].position, city.gates[i + 1].position);
+              auto path = map.computeRoute(city.gates[i].spot.position, city.gates[i + 1].spot.position);
               digPath(path);
             }
           }
@@ -354,11 +354,11 @@ namespace be {
 
         for (auto index : cities) {
           const std::size_t originGate = m_random.computeUniformInteger(std::size_t(0), m_state.cities[index].gates.size() - 1);
-          const gf::Vector2i origin = m_state.cities[index].gates[originGate].position;
+          const gf::Vector2i origin = m_state.cities[index].gates[originGate].spot.position;
 
           const std::size_t nextIndex = (index + 1) % cities.size();
           const std::size_t targetGate = m_random.computeUniformInteger(std::size_t(0), m_state.cities[nextIndex].gates.size() - 1);
-          const gf::Vector2i target = m_state.cities[nextIndex].gates[targetGate].position;
+          const gf::Vector2i target = m_state.cities[nextIndex].gates[targetGate].spot.position;
 
           auto path = map.computeRoute(origin, target);
           digPath(path);
@@ -374,7 +374,7 @@ namespace be {
         assert(!m_state.cities[city].gates.empty());
         const std::size_t gate = m_random.computeUniformInteger(std::size_t(0), m_state.cities[city].gates.size() - 1);
 
-        m_state.hero.location = m_state.cities[city].gates[gate].location;
+        m_state.hero.location = m_state.cities[city].gates[gate].spot.location;
       }
 
       bool isLargeGround(gf::Vector2i position) {

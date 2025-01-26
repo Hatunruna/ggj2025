@@ -350,7 +350,7 @@ namespace be {
   {
     const auto& city = cities[contract.targetCity];
     for (const auto& gate: city.gates) {
-      if (gf::squareDistance(gate.location, hero.location) > gf::square(ProducerDistance)) {
+      if (gf::squareDistance(gate.spot.location, hero.location) > gf::square(ProducerDistance)) {
         continue;
       }
 
