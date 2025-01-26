@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <fstream>
 #include <limits>
+#include <numeric>
 #include <queue>
 #include <utility>
 
