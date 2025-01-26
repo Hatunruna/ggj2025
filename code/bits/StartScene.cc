@@ -26,6 +26,8 @@ namespace be {
     addAction(m_fullscreenAction);
 
     addHudEntity(m_titleEntity);
+
+    m_game.getWindow().toggleFullscreen();
   }
 
   void StartScene::doHandleActions([[maybe_unused]] gf::Window& window) {
