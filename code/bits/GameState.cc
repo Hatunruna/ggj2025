@@ -4,6 +4,7 @@
 
 #include <chipmunk/chipmunk.h>
 
+#include <cstddef>
 #include <gf/Log.h>
 #include <gf/Geometry.h>
 #include <gf/Polyline.h>
@@ -14,6 +15,7 @@
 
 #include "ContractState.h"
 #include "MapSettings.h"
+#include "bits/HeroState.h"
 
 namespace be {
 
@@ -227,9 +229,13 @@ namespace be {
 
   void GameState::tryToTakeBubble()
   {
-    cpSpace* space = physics.getSpace();
+    if (bubbles.size() >= static_cast<size_t>(HeroMaxBubble)) {
+      return;
+    }
 
+    cpSpace* space = physics.getSpace();
     for (auto& producer : producers) {
+
       if (gf::squareDistance(producer.spot.location, hero.location) > gf::square(ProducerDistance)) {
         continue;
       }
