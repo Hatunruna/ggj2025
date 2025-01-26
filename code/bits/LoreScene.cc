@@ -47,6 +47,7 @@ namespace be {
   {
     if (!m_generation_finished && isLoaded()) {
       m_generation_finished = true;
+      m_game.miniMap.initMap();
       addHudEntity(m_loreEndEntity);
     }
   }

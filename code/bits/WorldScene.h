@@ -37,6 +37,7 @@ namespace be {
     gf::Action m_rightAction;
     gf::Action m_takeAction;
     gf::Action m_releaseAction;
+    gf::Action m_miniMapAction;
 
     gf::Action m_debugAction;
 

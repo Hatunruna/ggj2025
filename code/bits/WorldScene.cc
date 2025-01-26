@@ -2,6 +2,7 @@
 
 #include "GameHub.h"
 #include "HeroState.h"
+#include "gf/Gamepad.h"
 
 namespace be {
 
@@ -14,6 +15,7 @@ namespace be {
   , m_rightAction("right")
   , m_takeAction("take")
   , m_releaseAction("release")
+  , m_miniMapAction("minmap")
   , m_debugAction("debug")
   , m_mapEntity(game)
   , m_trapEntity(game)
@@ -62,6 +64,10 @@ namespace be {
     m_releaseAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::B);
     addAction(m_releaseAction);
 
+    m_miniMapAction.addKeycodeKeyControl(gf::Keycode::M);
+    m_miniMapAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::Guide);
+    addAction(m_miniMapAction);
+
     m_debugAction.addScancodeKeyControl(gf::Scancode::F12);
     addAction(m_debugAction);
 
@@ -99,6 +105,10 @@ namespace be {
 
   void WorldScene::doHandleActions([[maybe_unused]] gf::Window& window)
   {
+    if (m_miniMapAction.isActive()) {
+      m_game.replaceScene(m_game.miniMap);
+    }
+
     gf::Vector2i direction = { 0, 0 };
 
     if (m_upAction.isActive()) {

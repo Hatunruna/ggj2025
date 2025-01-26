@@ -205,6 +205,8 @@ namespace be {
 
           cells = std::move(next);
         }
+
+        m_state.miniMap.visited = gf::Array2D<MiniMapStatus, int>(MapSize);
       }
 
       void generateCities()
@@ -489,7 +491,7 @@ namespace be {
         auto& cells = m_state.map.cells;
 
         for (gf::Vector2i position : cells.getPositionRange()) {
-          if (position.y > 0 && cells(position).type == CellType::Block && cells({ position.x, position.y + 1 }).type == CellType::Ground) {
+          if (position.y < cells.getRows() - 1 && cells(position).type == CellType::Block && cells({ position.x, position.y + 1 }).type == CellType::Ground) {
             cells(position).type = CellType::Cliff;
             cells(position).tile = m_random.computeUniformInteger(0, 6);
           } else if (cells(position).type == CellType::Ground) {

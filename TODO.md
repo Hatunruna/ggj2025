@@ -14,14 +14,17 @@
 ## Code
 
 - bubbles
-  - limit to 5 -> done
-  - cooldown after bubble explosion -> done
+  - desync animations
+  - bubbles in line
+- hero
+  - render arrows in their own entities
 - physics
   - make bubble more stable
   - performance: look at spatial hash: https://chipmunk-physics.net/release/ChipmunkLatest-Docs/#cpSpace-SpatialHash
 - minimap
-  - create minimap image from map (1 pixel per tile)
-  - handle fog of war
+  - display hero
+- procgen
+  - move gates generation after sanitize
 - contracts
 - generation
 - end of game

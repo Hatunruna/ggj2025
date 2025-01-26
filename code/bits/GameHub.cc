@@ -1,7 +1,5 @@
 #include "GameHub.h"
 
-#include "ProcGen.h"
-
 #include "config.h"
 
 namespace be {
@@ -13,6 +11,7 @@ namespace be {
   , lore(*this)
   , contract(*this)
   , world(*this)
+  , miniMap(*this)
   {
     pushScene(start);
   }

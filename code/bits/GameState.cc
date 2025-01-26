@@ -18,6 +18,8 @@
 #include "ContractState.h"
 #include "HeroState.h"
 #include "MapSettings.h"
+#include "gf/Range.h"
+#include "gf/Vector.h"
 
 namespace be {
 
@@ -93,6 +95,19 @@ namespace be {
 
       return gf::buildLines(segments);
     }
+
+    gf::NeighborSquareRange<int> computeFogRange(gf::Vector2i position, gf::Vector2i size)
+    {
+      constexpr int N = 5;
+
+      auto colMin = position.col - std::min(position.col, N);
+      auto colMax = position.col + std::min(size.col - position.col - 1, N);
+      auto rowMin = position.row - std::min(position.row, N);
+      auto rowMax = position.row + std::min(size.row - position.row - 1, N);
+
+      return gf::NeighborSquareRange<int>{ gf::Range<int>{ colMin, colMax + 1 }, gf::Range<int>{ rowMin, rowMax + 1 }, position };
+    }
+
 
   }
 
@@ -399,6 +414,16 @@ namespace be {
           break;
       }
     }
+
+    // mini map
+
+    gf::Vector2i heroPosition = hero.location / TileSize;
+    miniMap.visited(heroPosition) = MiniMapStatus::Visited;
+
+    for (auto neighbor : computeFogRange(heroPosition, miniMap.visited.getSize())) {
+      miniMap.visited(neighbor) = MiniMapStatus::Visited;
+    }
+
   }
 
   void GameState::loadFromFile(const gf::Path& filename) {

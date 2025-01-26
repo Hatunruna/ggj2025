@@ -14,6 +14,7 @@
 #include "ContractState.h"
 #include "FeedbackState.h"
 #include "HeroState.h"
+#include "MiniMapState.h"
 #include "MapState.h"
 #include "PhysicsModel.h"
 #include "TrapState.h"
@@ -29,6 +30,7 @@ namespace be {
     PhysicsModel physics;
 
     MapState map;
+    MiniMapState miniMap;
     HeroState hero;
     std::vector<BubbleProducerState> producers;
     std::vector<BubbleState> bubbles;
@@ -38,6 +40,8 @@ namespace be {
     FeedbackState feedback;
     float contractProgress = ContractStep;
     std::vector<TrapState> traps;
+
+
 
     void initializePhysics();
 

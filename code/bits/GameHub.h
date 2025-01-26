@@ -10,6 +10,7 @@
 #include "LoreScene.h"
 #include "StartScene.h"
 #include "WorldScene.h"
+#include "MiniMapScene.h"
 
 namespace be {
 
@@ -25,6 +26,7 @@ namespace be {
     LoreScene lore;
     ContractScene contract;
     WorldScene world;
+    MiniMapScene miniMap;
   };
 
 
