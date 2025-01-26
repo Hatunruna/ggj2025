@@ -356,6 +356,7 @@ namespace be {
     physics.update(time);
 
     hero.location = toVec(cpBodyGetPosition(hero.body));
+    hero.lastHitTime += time;
 
     for (auto& producer : producers) {
       producer.lifetime += time;

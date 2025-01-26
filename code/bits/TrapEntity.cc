@@ -5,9 +5,11 @@
 #include <gf/Log.h>
 #include <gf/RenderTarget.h>
 #include <gf/Shapes.h>
+#include <gf/Time.h>
 #include <gf/VectorOps.h>
 
 #include "GameHub.h"
+#include "HeroState.h"
 #include "TrapState.h"
 
 namespace be {
@@ -40,7 +42,10 @@ namespace be {
           trap.status = TrapStatus::Rest;
         } else {
           trap.radius = gf::clamp(TrapGrowRate * time.asSeconds() + trap.radius, 0.0f, TrapMaxHitRadius);
-          if (gf::squareDistance(trap.spot.location, m_state.hero.location) <= (trap.radius * trap.radius)) {
+          if (gf::squareDistance(trap.spot.location, m_state.hero.location) <= (trap.radius * trap.radius)
+            && m_state.hero.lastHitTime.asSeconds() >= HeroInvincibilityTime) {
+            m_state.hero.lastHitTime = gf::Time::zero();
+            --m_state.hero.life;
             gf::Log::debug("Player hit!\n");
           }
         }

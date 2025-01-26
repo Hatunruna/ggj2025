@@ -133,6 +133,13 @@ namespace be {
 
   }
 
+  void WorldScene::doUpdate([[maybe_unused]] gf::Time time)
+  {
+    if (m_game.state.hero.life <= 0) {
+      m_game.replaceAllScenes(m_game.start);
+    }
+  }
+
   void WorldScene::doRender(gf::RenderTarget &target, const gf::RenderStates &states)
   {
     setWorldViewCenter(m_game.state.hero.location);

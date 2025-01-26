@@ -25,6 +25,7 @@ namespace be {
   private:
     void doProcessEvent(gf::Event& event) override;
     void doHandleActions(gf::Window& window) override;
+    void doUpdate(gf::Time time) override;
     void doRender(gf::RenderTarget &target, const gf::RenderStates &states) override;
     void doShow() override;
 
