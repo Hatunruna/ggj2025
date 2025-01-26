@@ -16,7 +16,10 @@ namespace be {
     setWorldViewSize(MapSize);
     setWorldViewCenter({ 0.0f, 0.0f });
 
+    m_exitAction.addKeycodeKeyControl(gf::Keycode::M);
     m_exitAction.addScancodeKeyControl(gf::Scancode::Escape);
+    m_exitAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::Start);
+    m_exitAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::B);
     addAction(m_exitAction);
 
     addWorldEntity(m_miniMapEntity);

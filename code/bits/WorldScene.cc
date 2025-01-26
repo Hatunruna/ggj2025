@@ -65,7 +65,7 @@ namespace be {
     addAction(m_releaseAction);
 
     m_miniMapAction.addKeycodeKeyControl(gf::Keycode::M);
-    m_miniMapAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::Guide);
+    m_miniMapAction.addGamepadButtonControl(gf::AnyGamepad, gf::GamepadButton::Start);
     addAction(m_miniMapAction);
 
     m_debugAction.addScancodeKeyControl(gf::Scancode::F12);

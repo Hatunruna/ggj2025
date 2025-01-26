@@ -78,6 +78,11 @@ namespace be {
     text.setAnchor(gf::Anchor::Center);
     text.setPosition(coords.getRelativePoint({0.165f, 0.18f}));
     target.draw(text, states);
+
+    text.setString("(M) Minimap");
+    text.setAnchor(gf::Anchor::BottomRight);
+    text.setPosition(coords.getRelativePoint({0.90f, 0.90f}));
+    target.draw(text, states);
   }
 
 }
