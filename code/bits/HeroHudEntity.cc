@@ -1,5 +1,7 @@
 #include "HeroHudEntity.h"
 
+#include <string>
+
 #include <gf/Anchor.h>
 #include <gf/Color.h>
 #include <gf/Coordinates.h>
@@ -31,19 +33,19 @@ namespace be {
     case BubbleType::Red:
       m_contractBubble = &m_redBubbleAnimation;
       break;
-    
+
     case BubbleType::Blue:
       m_contractBubble = &m_blueBubbleAnimation;
       break;
-    
+
     case BubbleType::Green:
       m_contractBubble = &m_greenBubbleAnimation;
       break;
-    
+
     case BubbleType::Yellow:
       m_contractBubble = &m_yellowBubbleAnimation;
       break;
-    
+
     default:
       assert(false);
       break;
@@ -55,19 +57,27 @@ namespace be {
   {
     gf::Coordinates coords(target);
 
+    constexpr float characterSize = 0.05f;
+    const unsigned relativeCharacterSize = coords.getRelativeCharacterSize(characterSize);
+
     const float bubbleValue = m_state.computeBubblesValues();
-    gf::Text text(gf::niceNum(bubbleValue, 1.0f) + " / " + gf::niceNum(m_state.contract.bubbleValueTarget, 1.0f), m_font);
+    gf::Text text(gf::niceNum(bubbleValue, 1.0f) + " / " + gf::niceNum(m_state.contract.bubbleValueTarget, 1.0f), m_font, relativeCharacterSize);
     text.setColor(gf::Color::White);
-    text.setAnchor(gf::Anchor::CenterLeft);
-    text.setPosition(coords.getRelativePoint({0.1f, 0.1f}));
+    text.setAnchor(gf::Anchor::Center);
+    text.setPosition(coords.getRelativePoint({0.2f, 0.1f}));
     target.draw(text, states);
 
     gf::AnimatedSprite contractBubble;
     contractBubble.setAnimation(*m_contractBubble);
     contractBubble.setAnchor(gf::Anchor::CenterLeft);
-    contractBubble.setPosition(coords.getRelativePoint({0.1f, 0.1f}) - gf::Vector2f{70.0f, 5.0f});
+    contractBubble.setPosition(coords.getRelativePoint({0.15f, 0.1f}) - gf::Vector2f{70.0f, 5.0f});
     contractBubble.scale(HeroHudBubbleScale);
     target.draw(contractBubble, states);
+
+    text.setString("HP " + std::to_string(m_state.hero.life) + " / " + std::to_string(m_state.hero.life));
+    text.setAnchor(gf::Anchor::Center);
+    text.setPosition(coords.getRelativePoint({0.165f, 0.18f}));
+    target.draw(text, states);
   }
 
 }
