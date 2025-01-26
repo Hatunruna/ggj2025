@@ -8,12 +8,12 @@
 
 namespace be {
 
-  constexpr float TrapTriggerTime = 2.0f;
+  constexpr float TrapTriggerTime = 1.5f;
   constexpr float TrapActiveTime = TrapTriggerTime + 8.0f;
   constexpr float TrapRestTime = TrapActiveTime + 2.0f;
 
   constexpr float TrapTriggerDistance = TileSize.x * 3.0f;
-  constexpr float TrapGrowRate = TileSize.x * 3; // 3 tile/sec
+  constexpr float TrapGrowRate = TileSize.x * 4; // 4 tile/sec
   constexpr float TrapMaxHitRadius = TileSize.x * 4.0f;
 
   enum class TrapStatus {

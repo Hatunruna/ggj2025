@@ -14,3 +14,9 @@ magick montage -background transparent -tile 8x8 -geometry 200x200 jaune_detruir
 
 magick montage -background transparent -tile 3x1 -geometry 136x136 base_bulle/* ../bubble-express/producers.png
 magick montage -background '#3c96ee' -tile 20x2 -geometry 64x64 ground_tiles/* ../bubble-express/ground_tiles.png
+
+magick montage -background transparent -tile 4x4 -geometry 512x512 trap/01_debut/* ../bubble-express/animation/trap_spawn.png
+magick montage -background transparent -tile 8x8 -geometry 512x512 trap/02_mine_boucle/* ../bubble-express/animation/trap_trigger.png
+magick montage -background transparent -tile 8x8 -geometry 512x512 trap/03_mine_tire/* ../bubble-express/animation/trap_grow.png
+magick montage -background transparent -tile 8x8 -geometry 512x512 trap/04_fumee_boucle/* ../bubble-express/animation/trap_active.png
+magick montage -background transparent -tile 8x8 -geometry 512x512 trap/05_fumee_fin/* ../bubble-express/animation/trap_rest.png
