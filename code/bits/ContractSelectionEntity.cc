@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstdint>
 
+#include <gf/AnimatedSprite.h>
 #include <gf/Coordinates.h>
 #include <gf/Log.h>
 #include <gf/StringUtils.h>
@@ -18,11 +19,17 @@ namespace be {
   : m_game(game)
   , m_font(game.resources.getFont("DejaVuSans.ttf"))
   , m_textures({
-    game.resources.getTexture("redBubble.png"),
-    game.resources.getTexture("blueBubble.png"),
-    game.resources.getTexture("greenBubble.png"),
-    game.resources.getTexture("yellowBubble.png"),
-  })
+    game.resources.getTexture("animation/bubble_red.png"),
+    game.resources.getTexture("animation/bubble_blue.png"),
+    game.resources.getTexture("animation/bubble_green.png"),
+    game.resources.getTexture("animation/bubble_yellow.png"),
+    })
+  , m_animations{ 
+    m_redBubbleAnimation,
+    m_blueBubbleAnimation,
+    m_greenBubbleAnimation,
+    m_yellowBubbleAnimation
+    }
   , m_text1("Choice1", m_font)
   , m_text2("Choice2", m_font)
   , m_text3("Choice3", m_font)
@@ -56,6 +63,16 @@ namespace be {
       gf::Log::debug("Choice 3\n");
       m_game.contract.selectNextContract(2);
     });
+
+    for (std::size_t i = 0; i < CityCount; ++i) {
+      m_animations[i].get().addTileset(m_textures[i], gf::vec(8, 8), gf::seconds(1.0f / 25.0f), 64);
+    }
+  }
+
+  void ContractSelectionEntity::update(gf::Time time) {
+    for (std::size_t i = 0; i < CityCount; ++i) {
+      m_animations[i].get().update(time);
+    }
   }
 
   void ContractSelectionEntity::updateContracts(const std::array<ContractState, CityCount - 1>& nextContracts)
@@ -80,7 +97,7 @@ namespace be {
         "distance: " + gf::niceNum(distance, 1.0f) + "\n\n" +
         "value: " + gf::niceNum(nextContracts[i].bubbleValueTarget, 1.0f)
       );
-      m_choicesBubble[i] = &(m_textures[static_cast<uint8_t>(nextContracts[i].type)].get());
+      m_choicesBubble[i] = &(m_animations[static_cast<uint8_t>(nextContracts[i].type)].get());
       buttons[i]->setString(city.name);
     }
   }
@@ -133,9 +150,10 @@ namespace be {
     target.draw(m_text3,states);
 
     for (int i=0; i<3; i++) {
-      gf::Sprite contractBubble(*(m_choicesBubble[i]));
+      gf::AnimatedSprite contractBubble;
+      contractBubble.setAnimation(*(m_choicesBubble[i]));
       contractBubble.setAnchor(gf::Anchor::CenterLeft);
-      contractBubble.setPosition(coords.getRelativePoint({0.225f + 0.3f*i, 0.65f}) - gf::Vector2f{60.0f, 5.0f});
+      contractBubble.setPosition(coords.getRelativePoint({0.21f + 0.3f*i, 0.65f}) - gf::Vector2f{60.0f, 5.0f});
       contractBubble.scale(0.4f);
       target.draw(contractBubble, states);
     }
