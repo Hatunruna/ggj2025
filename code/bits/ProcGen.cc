@@ -397,12 +397,7 @@ namespace be {
         for (gf::Vector2i position : cells.getPositionRange()) {
           if (position.y > 0 && cells(position).type == CellType::Block && cells({ position.x, position.y + 1 }).type == CellType::Ground) {
             cells(position).type = CellType::Cliff;
-
-            if (m_random.computeBernoulli(0.95)) {
-              cells(position).tile = 0;
-            } else {
-              cells(position).tile = m_random.computeUniformInteger(1, 6);
-            }
+            cells(position).tile = m_random.computeUniformInteger(0, 6);
           } else if (cells(position).type == CellType::Ground) {
 
             if (m_random.computeBernoulli(0.95)) {
