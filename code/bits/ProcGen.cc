@@ -155,6 +155,7 @@ namespace be {
         generateBaseMap();
         generateCities();
         sanitizeMap();
+        generateGates();
         generatePaths();
 
         computeStartPoint();
@@ -272,7 +273,17 @@ namespace be {
           }
         }
 
-        // gates
+      }
+
+      void sanitizeMap()
+      {
+        Sanitizer sanitizer(m_state.map.cells);
+        sanitizer.run();
+      }
+
+      void generateGates()
+      {
+        auto& cells = m_state.map.cells;
 
         for (auto& city : m_state.cities) {
           for (auto direction : { gf::Direction::Left, gf::Direction::Down, gf::Direction::Right }) {
@@ -296,12 +307,6 @@ namespace be {
             }
           }
         }
-      }
-
-      void sanitizeMap()
-      {
-        Sanitizer sanitizer(m_state.map.cells);
-        sanitizer.run();
       }
 
       void digPath(const std::vector<gf::Vector2i>& path)
