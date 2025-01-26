@@ -60,6 +60,7 @@ add_executable(${GAME}
   code/bits/ContractSelectionEntity.cc
   code/bits/ContractState.cc
   code/bits/FeedbackEntity.cc
+  code/bits/GateEntity.cc
   code/bits/GameData.cc
   code/bits/GameHub.cc
   code/bits/GameState.cc

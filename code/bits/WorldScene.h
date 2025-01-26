@@ -8,6 +8,7 @@
 #include "BubbleEntity.h"
 #include "CityEntity.h"
 #include "FeedbackEntity.h"
+#include "GateEntity.h"
 #include "HeroEntity.h"
 #include "HeroHudEntity.h"
 #include "MapEntity.h"
@@ -46,7 +47,8 @@ namespace be {
     HeroEntity m_heroEntity;
     BubbleEntity m_bubbleEntity;
     CityEntity m_cityEntity;
-    MountainsEntity m_mountainsEntity; // Must be the last
+    MountainsEntity m_mountainsEntity;
+    GateEntity m_gateEntity;
 
     HeroHudEntity m_heroHudEntity;
     FeedbackEntity m_feedbackEntity;

@@ -508,6 +508,43 @@ namespace be {
             }
           }
         }
+
+        // Remove cliff near gates
+        for (const auto& city: m_state.cities){
+          for (const auto& gate: city.gates){
+            switch (gate.direction) {
+              case gf::Direction::Left:
+                for (int row = 0; row < 3; ++row) {
+                  auto& cell = cells(gate.spot.position + gf::vec(-2, 2 + row));
+                  if (cell.type == CellType::Cliff) {
+                    cell.type = CellType::Block;
+                  }
+                }
+                break;
+
+              case gf::Direction::Right:
+                for (int row = 0; row < 3; ++row) {
+                  auto& cell = cells(gate.spot.position + gf::vec( 2, 2 + row));
+                  if (cell.type == CellType::Cliff) {
+                    cell.type = CellType::Block;
+                  }
+                }
+                break;
+
+              case gf::Direction::Down:
+                for (int col = -1; col < 3; ++col) {
+                  auto& cell = cells(gate.spot.position + gf::vec(col, -2));
+                  if (cell.type == CellType::Cliff) {
+                    cell.type = CellType::Block;
+                  }
+                }
+                break;
+
+              default:
+                assert(false);
+            }
+          }
+        }
       }
 
       GameState& m_state;
