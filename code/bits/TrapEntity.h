@@ -12,6 +12,7 @@ namespace be {
   public:
     TrapEntity(GameHub& game);
 
+    void update(gf::Time time) override;
     void render(gf::RenderTarget &target, const gf::RenderStates &states) override;
 
   private:
