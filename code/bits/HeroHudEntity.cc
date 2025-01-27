@@ -11,7 +11,7 @@
 
 #include "GameHub.h"
 #include "GameState.h"
-#include "bits/HeroState.h"
+#include "HeroState.h"
 
 namespace be {
   HeroHudEntity::HeroHudEntity(GameHub& game)

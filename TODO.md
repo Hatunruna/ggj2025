@@ -13,15 +13,16 @@
 
 ## Code
 
+- lore
+  - rewrite
 - bubbles
   - desync animations
 - hero
   - render arrows in their own entities
   - render only one arrow (and remove it when arriving near target)
 - physics
+  - fix producer shape
   - performance: look at spatial hash: https://chipmunk-physics.net/release/ChipmunkLatest-Docs/#cpSpace-SpatialHash
-- minimap
-- procgen
-- contracts
-- generation
+- ennemies
+  - put sprites
 - end of game
