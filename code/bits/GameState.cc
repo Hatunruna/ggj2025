@@ -263,7 +263,11 @@ namespace be {
       if (producer.type != contract.type) {
         feedback.message = "Wrong bubble type!";
         feedback.time.restart();
-        return;
+        break;
+      }
+
+      if (producer.status != BubbleProducerStatus::Growing) {
+        break;
       }
 
       gf::Log::debug("Bubble taken!\n");
