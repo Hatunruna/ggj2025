@@ -424,7 +424,9 @@ namespace be {
     miniMap.visited(heroPosition) = MiniMapStatus::Visited;
 
     for (auto neighbor : computeFogRange(heroPosition, miniMap.visited.getSize())) {
-      miniMap.visited(neighbor) = MiniMapStatus::Visited;
+      if (miniMap.visited.isValid(neighbor)) {
+        miniMap.visited(neighbor) = MiniMapStatus::Visited;
+      }
     }
 
   }
