@@ -4,6 +4,7 @@
 #include <gf/GameManager.h>
 
 #include "AudioManager.h"
+#include "BaseScene.h"
 #include "GameData.h"
 #include "GameState.h"
 #include "ContractScene.h"
@@ -22,6 +23,7 @@ namespace be {
 
     AudioManager audio;
 
+    BaseScene base;
     StartScene start;
     LoreScene lore;
     ContractScene contract;

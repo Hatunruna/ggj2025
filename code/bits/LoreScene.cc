@@ -55,7 +55,7 @@ namespace be {
   void LoreScene::doHandleActions([[maybe_unused]] gf::Window& window)
   {
     if (m_generation_finished && m_nextAction.isActive()) {
-      m_game.replaceAllScenes(m_game.contract);
+      m_game.replaceScene(m_game.contract);
     }
   }
 

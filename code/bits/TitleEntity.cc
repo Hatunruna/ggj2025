@@ -30,9 +30,9 @@ namespace be {
     background.setScale(backgroundScale);
     target.draw(background, states);
 
-    unsigned instructionsCharacterSize = coords.getRelativeCharacterSize(0.03f);
+    unsigned instructionsCharacterSize = coords.getRelativeCharacterSize(0.06f);
 
-    gf::Text instructions("Press a button to start", m_font, instructionsCharacterSize);
+    gf::Text instructions("Press space to start", m_font, instructionsCharacterSize);
     instructions.setColor(gf::Color::White);
     instructions.setPosition(coords.getRelativePoint({ 0.5f, 0.9f }));
     instructions.setAnchor(gf::Anchor::Center);

@@ -38,7 +38,7 @@ namespace be {
     const auto& cityName = m_game.state.cities[m_game.state.contract.targetCity].name;
     gf::Log::debug("New target City: '%s'\n", cityName.c_str());
 
-    m_game.replaceAllScenes(m_game.world);
+    m_game.replaceScene(m_game.world);
   }
 
   void ContractScene::doHandleActions([[maybe_unused]] gf::Window& window) {

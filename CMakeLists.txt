@@ -52,6 +52,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/code/config.h.in ${CMAKE_CURRENT_BINA
 add_executable(${GAME}
   code/main.cc
   code/bits/AudioManager.cc
+  code/bits/BaseScene.cc
   code/bits/BubbleEntity.cc
   code/bits/BubbleState.cc
   code/bits/CityEntity.cc

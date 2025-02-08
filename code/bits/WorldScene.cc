@@ -129,7 +129,7 @@ namespace be {
 
     if (m_takeAction.isActive()) {
       if (m_game.state.tryToEnterCity()) {
-        m_game.replaceAllScenes(m_game.contract);
+        m_game.replaceScene(m_game.contract);
       } else {
         m_game.state.tryToTakeBubble();
       }
@@ -148,7 +148,7 @@ namespace be {
   void WorldScene::doUpdate([[maybe_unused]] gf::Time time)
   {
     if (m_game.state.hero.life <= 0) {
-      m_game.replaceAllScenes(m_game.start);
+      m_game.replaceScene(m_game.start);
     }
   }
 

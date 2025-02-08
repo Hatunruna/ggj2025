@@ -13,6 +13,8 @@
 
 ## Code
 
+- ui
+  - bubbles are not scaled
 - lore
   - rewrite
 - bubbles
@@ -21,8 +23,13 @@
   - render arrows in their own entities
   - render only one arrow (and remove it when arriving near target)
 - physics
+  - reset all physics
   - fix producer shape
   - performance: look at spatial hash: https://chipmunk-physics.net/release/ChipmunkLatest-Docs/#cpSpace-SpatialHash
-- ennemies
-  - put sprites
+- map
+  - render normal moutains more frequently
+  - render gates in their own entity
+  - make ground in front of gates
 - end of game
+  - reset of game
+  - score
