@@ -19,9 +19,6 @@
   - rewrite
 - bubbles
   - desync animations
-- hero
-  - render arrows in their own entities
-  - render only one arrow (and remove it when arriving near target)
 - physics
   - reset all physics
   - fix producer shape
