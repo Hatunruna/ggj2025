@@ -9,8 +9,6 @@ namespace be {
   struct GameHub;
   struct GameState;
 
-  constexpr float ArrowSize = 10.0f;
-  constexpr float ArrowRange = 128.0f;
   constexpr float HeroScale = 0.5f;
 
   class HeroEntity : public gf::Entity {

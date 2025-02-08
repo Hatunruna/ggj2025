@@ -10,6 +10,7 @@
 #include "FeedbackEntity.h"
 #include "GateEntity.h"
 #include "HeroEntity.h"
+#include "HeroHintEntity.h"
 #include "HeroHudEntity.h"
 #include "MapEntity.h"
 #include "MountainsEntity.h"
@@ -45,6 +46,7 @@ namespace be {
     MapEntity m_mapEntity;
     TrapEntity m_trapEntity;
     HeroEntity m_heroEntity;
+    HeroHintEntity m_heroHintEntity;
     BubbleEntity m_bubbleEntity;
     CityEntity m_cityEntity;
     MountainsEntity m_mountainsEntity;

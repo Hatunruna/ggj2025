@@ -18,7 +18,7 @@ namespace be {
 
   template<typename Archive>
   Archive& operator|(Archive& ar, ContractState& state) {
-    return ar | state.originCity | state.targetCity | state.bubbleValueTarget;
+    return ar | state.originCity | state.targetCity | state.bubbleValueTarget | state.type;
   }
 
 }

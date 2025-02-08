@@ -77,28 +77,6 @@ namespace be {
 
   void HeroEntity::render(gf::RenderTarget &target, const gf::RenderStates &states)
   {
-    gf::Vector2f directionCity = gf::normalize(m_state.cities[m_state.contract.targetCity].spot.location - m_state.hero.location);
-    gf::CircleShape targetCityArrow(ArrowSize, 3);
-    targetCityArrow.setColor(gf::Color::Red);
-    targetCityArrow.setAnchor(gf::Anchor::Center);
-    targetCityArrow.setPosition(m_state.hero.location + ArrowRange * directionCity);
-    targetCityArrow.setRotation(gf::angle(directionCity) + gf::Pi2);
-    target.draw(targetCityArrow, states);
-
-    auto iteratorBubble = std::find_if(m_state.cities.begin(), m_state.cities.end(), [&](const CityState& city) {
-      return city.type == m_state.contract.type;
-    });
-
-    assert(iteratorBubble != m_state.cities.end());
-
-    gf::Vector2f directionBubble = gf::normalize(iteratorBubble->center - m_state.hero.location);
-    gf::CircleShape targetBubbleArrow(ArrowSize, 3);
-    targetBubbleArrow.setColor(gf::Color::Yellow);
-    targetBubbleArrow.setAnchor(gf::Anchor::Center);
-    targetBubbleArrow.setPosition(m_state.hero.location + ArrowRange * directionBubble);
-    targetBubbleArrow.setRotation(gf::angle(directionBubble) + gf::Pi2);
-    target.draw(targetBubbleArrow, states);
-
     gf::AnimatedSprite animatedSprite;
     animatedSprite.setAnimation(*m_currentAnimation);
     animatedSprite.setPosition(m_state.hero.location);
