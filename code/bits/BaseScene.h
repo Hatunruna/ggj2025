@@ -16,6 +16,7 @@ namespace be {
     GameHub& m_game;
 
     gf::Action m_fullscreenAction;
+    gf::Action m_quitAction;
   };
 
 }
