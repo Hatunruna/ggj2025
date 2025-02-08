@@ -31,6 +31,8 @@ namespace be {
     gf::Animation m_greenBubbleAnimation;
     const gf::Texture& m_yellowBubbleTexture;
     gf::Animation m_yellowBubbleAnimation;
+
+    const gf::Texture& m_heartTexture;
   };
 
 }
