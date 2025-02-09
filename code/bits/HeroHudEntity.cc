@@ -68,7 +68,7 @@ namespace be {
     gf::Text bubbleText(gf::niceNum(bubbleValue, 1.0f) + " / " + gf::niceNum(m_state.contract.bubbleValueTarget, 1.0f), m_font, relativeCharacterSize);
     bubbleText.setColor(gf::Color::White);
     bubbleText.setAnchor(gf::Anchor::CenterLeft);
-    bubbleText.setPosition(coords.getRelativePoint({0.11f, 0.1f}));
+    bubbleText.setPosition(coords.getRelativePoint({0.08f, 0.1f}));
     target.draw(bubbleText, states);
 
     gf::AnimatedSprite contractBubble;
