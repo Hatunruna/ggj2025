@@ -59,6 +59,7 @@ namespace be {
   struct BubbleState {
     float size = 0.0f;
     BubbleType type = BubbleType::None;
+    gf::Time time = gf::Time::zero();
     cpBody* body = nullptr;
     cpShape* shape = nullptr;
     cpConstraint* pin = nullptr;

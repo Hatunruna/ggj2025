@@ -90,7 +90,7 @@ namespace be {
     healthSprite.setScale(0.1f * scale);
 
     for (int i = 0; i < HeroMaxHealth; ++i) {
-      healthSprite.setColor(i <= m_state.hero.life ? gf::Color::Red : gf::Color::Black);
+      healthSprite.setColor(i < m_state.hero.life ? gf::Color::Red : gf::Color::Black);
       healthSprite.setPosition(coords.getRelativePoint({ 0.75f + 0.04f * i, 0.1f }));
       target.draw(healthSprite, states);
     }
